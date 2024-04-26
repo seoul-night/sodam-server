@@ -3,18 +3,21 @@ package growthook.org.bamgang.members.domain;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "member")
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name="userid")
     private int userId;
 
+    @Column(name="nickname")
     private String nickName;
 
     private int exp;
 
+    @Column(name = "walkedday")
     private int walkedDay;
 
-    private int pickedCount;
 
     public int getExp() {
         return exp;
@@ -30,14 +33,6 @@ public class Member {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public int getPickedCount() {
-        return pickedCount;
-    }
-
-    public void setPickedCount(int pickedCount) {
-        this.pickedCount = pickedCount;
     }
 
     public int getUserId() {
