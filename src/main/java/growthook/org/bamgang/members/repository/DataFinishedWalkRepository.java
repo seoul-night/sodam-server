@@ -11,6 +11,5 @@ public interface DataFinishedWalkRepository extends JpaRepository<FinishedWalk, 
     @Override
     Optional<FinishedWalk> findById(Integer id);
 
-
     List<FinishedWalk> findAllByUserId(Integer userId);
 }
