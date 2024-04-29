@@ -1,11 +1,16 @@
 package growthook.org.bamgang.members.service;
 
+import growthook.org.bamgang.members.domain.FinishedWalk;
 import growthook.org.bamgang.members.domain.Member;
+import growthook.org.bamgang.members.domain.PickedWalk;
+import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
+import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.members.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,12 +20,26 @@ public class MemberService {
 
     private MemberRepository memberRepository;
 
+    private DataFinishedWalkRepository finishedWalkRepository;
+
+    private DataPickedWalkRepository dataPickedWalkRepository;
+
     @Autowired
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository) {
         this.memberRepository = memberRepository;
+        this.finishedWalkRepository = finishedWalkRepository;
+        this.dataPickedWalkRepository = dataPickedWalkRepository;
     }
 
     public Optional<Member> findById(int id) {
         return memberRepository.findByUserId(id);
+    }
+
+    public List<FinishedWalk> findAllById(int id){
+        return finishedWalkRepository.findAllByUserId(id);
+    }
+
+    public List<PickedWalk> findAllByUserId(int id){
+        return dataPickedWalkRepository.findByUserId(id);
     }
 }

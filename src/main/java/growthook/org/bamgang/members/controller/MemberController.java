@@ -2,7 +2,6 @@ package growthook.org.bamgang.members.controller;
 
 import growthook.org.bamgang.members.domain.FinishedWalk;
 import growthook.org.bamgang.members.domain.Member;
-import growthook.org.bamgang.members.service.FinishedWalkService;
 import growthook.org.bamgang.members.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,13 +19,10 @@ public class MemberController {
     @Autowired
     private final MemberService memberService;
 
-    @Autowired
-    private final FinishedWalkService finishedWalkService;
 
     @Autowired
-    public MemberController(final MemberService memberService, final FinishedWalkService finishedWalkService) {
+    public MemberController(final MemberService memberService) {
         this.memberService = memberService;
-        this.finishedWalkService = finishedWalkService;
     }
 
     @GetMapping()
@@ -39,7 +35,7 @@ public class MemberController {
     @GetMapping("/list3")
     public List<FinishedWalk> getUserInfo3(@RequestBody Member member){
         int id = member.getUserId();
-        List<FinishedWalk> walks = finishedWalkService.findAllById(id);
+        List<FinishedWalk> walks = memberService.findAllById(id);
         return walks;
     }
 

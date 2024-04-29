@@ -1,6 +1,7 @@
 package growthook.org.bamgang.members.service;
 
 import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
+import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.members.repository.JpaMemberRepository;
 import growthook.org.bamgang.members.repository.MemberRepository;
 import jakarta.persistence.EntityManager;
@@ -15,24 +16,23 @@ public class SpringConfig {
 
     private final DataFinishedWalkRepository finishedWalkRepository;
 
+    private final DataPickedWalkRepository dataPickedWalkRepository;
+
     @Autowired
-    public SpringConfig(EntityManager em, DataFinishedWalkRepository finishedWalkRepository) {
+    public SpringConfig(EntityManager em, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository) {
         this.em = em;
         this.finishedWalkRepository = finishedWalkRepository;
+        this.dataPickedWalkRepository = dataPickedWalkRepository;
+
     }
 
     @Bean
     public MemberService memberService() {
-        return new MemberService(memberRepository());
+        return new MemberService(memberRepository(),finishedWalkRepository, dataPickedWalkRepository);
     }
 
     @Bean
     public MemberRepository memberRepository() {
         return new JpaMemberRepository(em);
-    }
-
-    @Bean
-    public FinishedWalkService finishedWalkService() {
-        return new FinishedWalkService(finishedWalkRepository);
     }
 }
