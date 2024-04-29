@@ -23,4 +23,6 @@ public class JpaMemberRepository implements MemberRepository{
         Member member = em.find(Member.class, userId);
         return Optional.ofNullable(member);
     }
+
+
 }
