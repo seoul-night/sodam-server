@@ -20,4 +20,8 @@ public class Member {
     private Integer exp;
 
     private Integer walkedDay;
+
+    private Integer finishedCount;
+
+    private Integer pickedCount;
 }
