@@ -7,22 +7,23 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Getter
 @Setter
-@Table(name = "finishedtrail")
-public class FinishedWalk {
-
+@Table(name = "pickedtrail")
+public class PickedWalk {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
-    private Integer finishedId;
-
     private Integer trailId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer userId;
 
-    private String review;
+    private Date pickedDay;
 
-    private String walkedDate;
+    private String trailRegion;
+
+
 }
