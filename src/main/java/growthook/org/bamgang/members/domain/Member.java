@@ -7,15 +7,12 @@ import jakarta.persistence.*;
 public class Member {
 
     @Id
-    @Column(name="userid")
     private int userId;
 
-    @Column(name="nickname")
     private String nickName;
 
     private int exp;
 
-    @Column(name = "walkedday")
     private int walkedDay;
 
 

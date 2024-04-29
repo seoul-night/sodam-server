@@ -30,9 +30,8 @@ public class MemberController {
     }
 
     @GetMapping()
-    public Optional<Member> getUserInfo(){
-//        int id = data.getUserId();
-        int id = 1;
+    public Optional<Member> getUserInfo(@RequestBody Member info){
+        int id = info.getUserId();
         Optional<Member> member = memberService.findById(id);
         return member;
     }
