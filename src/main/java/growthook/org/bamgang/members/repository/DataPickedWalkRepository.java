@@ -9,4 +9,5 @@ public interface DataPickedWalkRepository extends JpaRepository<PickedWalk, Inte
 
     List<PickedWalk> findByUserId(int userId);
 
+    PickedWalk findByUserIdAndTrailId(int userId, int trailId);
 }

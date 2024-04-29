@@ -59,5 +59,12 @@ public class MemberController {
         memberService.savePickedWalk(userId,trailId);
     }
 
+    @DeleteMapping("/list4")
+    public void deleteUserInfo4(@RequestBody PickedWalk pickedWalk){
+        int userId = pickedWalk.getUserId();
+        int trailId = pickedWalk.getTrailId();
+        memberService.deletePickedWalk(userId,trailId);
+    }
+
 }
 

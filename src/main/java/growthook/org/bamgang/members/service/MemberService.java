@@ -57,4 +57,9 @@ public class MemberService {
         dataPickedWalkRepository.save(pickedWalk);
     }
 
+    public void deletePickedWalk(int userId,int trailId) {
+        PickedWalk pickedWalk = dataPickedWalkRepository.findByUserIdAndTrailId(userId, trailId);
+        dataPickedWalkRepository.delete(pickedWalk);
+    }
+
 }
