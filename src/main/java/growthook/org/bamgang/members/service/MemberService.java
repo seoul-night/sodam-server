@@ -31,15 +31,18 @@ public class MemberService {
         this.dataPickedWalkRepository = dataPickedWalkRepository;
     }
 
-    public Optional<Member> findById(int id) {
+    // Memeber 조회
+    public Member findById(int id) {
         return memberRepository.findByUserId(id);
     }
 
-    public List<FinishedWalk> findAllById(int id){
+    // 완료한 산책로 조회
+    public List<FinishedWalk> findFinishedWalkById(int id){
         return finishedWalkRepository.findAllByUserId(id);
     }
 
-    public List<PickedWalk> findAllByUserId(int id){
+    // 찜한 산책로 조회
+    public List<PickedWalk> findPickedWalkById(int id){
         return dataPickedWalkRepository.findByUserId(id);
     }
 }

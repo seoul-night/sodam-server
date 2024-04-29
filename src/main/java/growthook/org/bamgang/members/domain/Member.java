@@ -1,50 +1,23 @@
 package growthook.org.bamgang.members.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "member")
 public class Member {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
-    private int userId;
+    private Integer userId;
 
     private String nickName;
 
-    private int exp;
+    private Integer exp;
 
-    private int walkedDay;
-
-
-    public int getExp() {
-        return exp;
-    }
-
-    public void setExp(int exp) {
-        this.exp = exp;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getWalkedDay() {
-        return walkedDay;
-    }
-
-    public void setWalkedDay(int walkedDay) {
-        this.walkedDay = walkedDay;
-    }
+    private Integer walkedDay;
 }

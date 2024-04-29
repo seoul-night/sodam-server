@@ -1,61 +1,28 @@
 package growthook.org.bamgang.members.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "finishedtrail")
 public class FinishedWalk {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
-    private int finishedId;
+    private Integer finishedId;
 
-    private int trailId;
+    private Integer trailId;
 
-    private int userId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer userId;
 
     private String review;
 
     private String walkedDate;
-
-    public int getFinishedId() {
-        return finishedId;
-    }
-
-    public void setFinishedId(int finishedId) {
-        this.finishedId = finishedId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        userId = userId;
-    }
-
-    public String getWalkedDate() {
-        return walkedDate;
-    }
-
-    public void setWalkedDate(String walkedDate) {
-        this.walkedDate = walkedDate;
-    }
-
-    public String getReview() {
-        return review;
-    }
-
-    public void setReview(String review) {
-        this.review = review;
-    }
-
-    public int getTrailId() {
-        return trailId;
-    }
-
-    public void setTrailId(int trailId) {
-        this.trailId = trailId;
-    }
 }

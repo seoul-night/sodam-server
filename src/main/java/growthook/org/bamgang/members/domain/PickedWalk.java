@@ -15,11 +15,11 @@ import java.util.Date;
 @Table(name = "pickedtrail")
 public class PickedWalk {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-
     @Id
-    private int trailId;
+    private Integer trailId;
 
-    private int userId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer userId;
 
     private Date pickedDay;
 
