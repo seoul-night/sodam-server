@@ -14,14 +14,13 @@ import java.util.Date;
 @Setter
 @Table(name = "pickedtrail")
 public class PickedWalk {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
     private Integer trailId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer userId;
 
-    private Date pickedDay;
+    private String trailTitle;
 
     private String trailRegion;
 

@@ -45,4 +45,16 @@ public class MemberService {
     public List<PickedWalk> findPickedWalkById(int id){
         return dataPickedWalkRepository.findByUserId(id);
     }
+
+    public void savePickedWalk(int userId,int trailId) {
+        PickedWalk pickedWalk = new PickedWalk();
+        pickedWalk.setUserId(userId);
+        pickedWalk.setTrailId(trailId);
+        //조회 개발 완료시  추가
+        //trailRepository.find
+        pickedWalk.setTrailTitle("test_title1");
+        pickedWalk.setTrailRegion("test_region1");
+        dataPickedWalkRepository.save(pickedWalk);
+    }
+
 }

@@ -5,10 +5,7 @@ import growthook.org.bamgang.members.domain.Member;
 import growthook.org.bamgang.members.domain.PickedWalk;
 import growthook.org.bamgang.members.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +48,15 @@ public class MemberController {
         List<PickedWalk> walks = memberService.findPickedWalkById(id);
         for(PickedWalk walk : walks){
             walk.setUserId(null);
-            walk.setTrailId(null);
         }
         return walks;
+    }
+
+    @PostMapping("/list4")
+    public void postUserInfo4(@RequestBody PickedWalk pickedWalk){
+        int userId = pickedWalk.getUserId();
+        int trailId = pickedWalk.getTrailId();
+        memberService.savePickedWalk(userId,trailId);
     }
 
 }
