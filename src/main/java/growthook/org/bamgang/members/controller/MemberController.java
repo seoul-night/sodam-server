@@ -4,6 +4,7 @@ import growthook.org.bamgang.members.domain.FinishedWalk;
 import growthook.org.bamgang.members.domain.Member;
 import growthook.org.bamgang.members.domain.PickedWalk;
 import growthook.org.bamgang.members.service.MemberService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,19 +53,24 @@ public class MemberController {
         return walks;
     }
 
+    @Transactional
     @PostMapping("/list4")
     public void postUserInfo4(@RequestBody PickedWalk pickedWalk){
         int userId = pickedWalk.getUserId();
         int trailId = pickedWalk.getTrailId();
+        Member member = memberService.findById(userId);
+        member.setPickedCount(member.getPickedCount() + 1);
         memberService.savePickedWalk(userId,trailId);
     }
 
+    @Transactional
     @DeleteMapping("/list4")
     public void deleteUserInfo4(@RequestBody PickedWalk pickedWalk){
         int userId = pickedWalk.getUserId();
         int trailId = pickedWalk.getTrailId();
+        Member member = memberService.findById(userId);
+        member.setPickedCount(member.getPickedCount() - 1);
         memberService.deletePickedWalk(userId,trailId);
     }
-
 }
 
