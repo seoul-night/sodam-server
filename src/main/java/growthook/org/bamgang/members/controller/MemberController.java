@@ -43,6 +43,11 @@ public class MemberController {
         return walks;
     }
 
+    @PostMapping("/list3")
+    public void postUserInfo3(@RequestBody FinishedWalk walk){
+        memberService.saveFinishedWalk(walk);
+    }
+
     @GetMapping("/list4")
     public List<PickedWalk> getUserInfo4(@RequestBody Member member){
         int id = member.getUserId();

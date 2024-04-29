@@ -1,12 +1,11 @@
 package growthook.org.bamgang.members.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Entity
 @Getter
@@ -16,6 +15,7 @@ public class FinishedWalk {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer finishedId;
 
     private Integer trailId;
@@ -25,5 +25,6 @@ public class FinishedWalk {
 
     private String review;
 
+    @Column(insertable = false)
     private String walkedDate;
 }
