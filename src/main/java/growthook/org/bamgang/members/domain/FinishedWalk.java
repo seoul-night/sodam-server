@@ -13,14 +13,14 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @Table(name = "finishedtrail")
 public class FinishedWalk {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer finishedId;
 
     private Integer trailId;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String trailTitle;
+
     private Integer userId;
 
     private String review;

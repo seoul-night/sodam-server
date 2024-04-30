@@ -11,7 +11,6 @@ import lombok.Setter;
 @Table(name = "member")
 public class Member {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id
     private Integer userId;
 
