@@ -32,7 +32,7 @@ public class MemberController {
         return member;
     }
 
-    @GetMapping("/list3")
+    @GetMapping("/walks/complete")
     public List<FinishedWalk> getUserInfo3(@RequestBody Member member){
         int id = member.getUserId();
         List<FinishedWalk> walks = memberService.findFinishedWalkById(id);
@@ -43,12 +43,12 @@ public class MemberController {
         return walks;
     }
 
-    @PostMapping("/list3")
+    @PostMapping("/walks/complete")
     public void postUserInfo3(@RequestBody FinishedWalk walk){
         memberService.saveFinishedWalk(walk);
     }
 
-    @GetMapping("/list4")
+    @GetMapping("/walks/select")
     public List<PickedWalk> getUserInfo4(@RequestBody Member member){
         int id = member.getUserId();
         List<PickedWalk> walks = memberService.findPickedWalkById(id);
@@ -59,7 +59,7 @@ public class MemberController {
     }
 
     @Transactional
-    @PostMapping("/list4")
+    @PostMapping("/walks/select")
     public void postUserInfo4(@RequestBody PickedWalk pickedWalk){
         int userId = pickedWalk.getUserId();
         int trailId = pickedWalk.getTrailId();
@@ -69,7 +69,7 @@ public class MemberController {
     }
 
     @Transactional
-    @DeleteMapping("/list4")
+    @DeleteMapping("/walks/select")
     public void deleteUserInfo4(@RequestBody PickedWalk pickedWalk){
         int userId = pickedWalk.getUserId();
         int trailId = pickedWalk.getTrailId();
