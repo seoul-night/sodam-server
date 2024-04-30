@@ -1,8 +1,12 @@
 package growthook.org.bamgang.trail.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Builder
+@Getter
 public class GetTrailResponseDto {
     private Integer id;
     private String title;
@@ -14,4 +18,6 @@ public class GetTrailResponseDto {
     private Double time;
     private String level;
     private String region;
+
+
 }
