@@ -17,7 +17,6 @@ public class PickedWalk {
     @Id
     private Integer trailId;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer userId;
 
     private String trailTitle;
