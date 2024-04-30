@@ -16,7 +16,8 @@ import java.util.Optional;
 
 @Transactional
 @Service
-public class MemberService {
+public class
+MemberService {
 
     private MemberRepository memberRepository;
 
