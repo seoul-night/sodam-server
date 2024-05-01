@@ -25,11 +25,12 @@ public class TrailServiceImpl implements TrailService{
                 .detail(trail.getDetail())
                 .image(trail.getImage())
                 .distance(trail.getDistance())
-                .cctvArr(trail.getCctvArr())
                 .rating(trail.getRating())
                 .time(trail.getTime())
                 .level(trail.getLevel())
                 .region(trail.getRegion())
+                .latitudeList(trail.getLatitudeList())
+                .longitudeList(trail.getLongitudeList())
                 .build();
     }
 }
