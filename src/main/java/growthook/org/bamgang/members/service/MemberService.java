@@ -10,6 +10,8 @@ import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
 import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
 import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.members.repository.MemberRepository;
+import growthook.org.bamgang.trail.domain.Trail;
+import growthook.org.bamgang.trail.repository.TrailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,11 +31,14 @@ public class MemberService {
 
     private DataPickedWalkRepository dataPickedWalkRepository;
 
+    public final TrailRepository trailRepository;
+
     @Autowired
-    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository) {
+    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository) {
         this.memberRepository = memberRepository;
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
+        this.trailRepository = trailRepository;
     }
 
     // Memeber 조회
@@ -72,9 +77,11 @@ public class MemberService {
         FinishedWalk finishedWalk = new FinishedWalk();
         finishedWalk.setUserId(finishedWalkRequest.getUserId());
         finishedWalk.setReview(finishedWalkRequest.getReview());
-        finishedWalk.setTrailId(finishedWalkRequest.getTrailId());
-        // 조회하면 title
-        finishedWalk.setTrailTitle("title");
+        int trailId = finishedWalkRequest.getTrailId();
+        finishedWalk.setTrailId(trailId);
+        // trail의 정보를 조회해서 추가
+        Trail trail = trailRepository.findById(trailId).orElseThrow(()->new RuntimeException());
+        finishedWalk.setTrailTitle(trail.getTitle());
         finishedWalkRepository.save(finishedWalk);
     }
 
@@ -104,10 +111,10 @@ public class MemberService {
         PickedWalk pickedWalk = new PickedWalk();
         pickedWalk.setUserId(userId);
         pickedWalk.setTrailId(trailId);
-        //조회 개발 완료시  추가
-        //trailRepository.find
-        pickedWalk.setTrailTitle("test_title1");
-        pickedWalk.setTrailRegion("test_region1");
+        // trail의 정보를 조회해서 추가
+        Trail trail = trailRepository.findById(trailId).orElseThrow(()->new RuntimeException());
+        pickedWalk.setTrailTitle(trail.getTitle());
+        pickedWalk.setTrailRegion(trail.getRegion());
 
         dataPickedWalkRepository.save(pickedWalk);
     }
