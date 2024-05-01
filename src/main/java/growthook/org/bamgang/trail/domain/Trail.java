@@ -25,9 +25,6 @@ public class Trail {
     @Column(name = "trail_distance")
     private Double distance;
 
-    @Column(name = "trail_cctv_arr")
-    private Integer[] cctvArr;
-
     @Column(name = "trail_rating")
     private Double rating;
 
@@ -39,4 +36,10 @@ public class Trail {
 
     @Column(name = "trail_region")
     private String region;
+
+    @Column(name = "latitude_list")
+    private Double[] latitudeList;
+
+    @Column(name = "longitude_list")
+    private Double[] longitudeList;
 }
