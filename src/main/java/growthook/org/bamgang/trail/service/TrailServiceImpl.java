@@ -77,6 +77,18 @@ public class TrailServiceImpl implements TrailService{
                 .collect(Collectors.toList());
     }
 
+
+    // 인기있는 산책로 리스트 가져오기.
+    @Override
+    public List<GetTrailResponseDto> getPopularTrail() {
+        List<Trail> popularTrails = trailRepository.findTop10ByOrderByRatingDesc();
+
+        // 가져온 trail list를 GetTrailResponseDto 리스트로 변환.
+        return popularTrails.stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+
     // trail객체를 GeteTrailResponseDto 객체로 바꿔주는 함수.
     @Override
     public GetTrailResponseDto convertToResponseDto(Trail trail) {
@@ -96,4 +108,6 @@ public class TrailServiceImpl implements TrailService{
                 .longitudeList(trail.getLongitudeList())
                 .build();
     }
+
+
 }
