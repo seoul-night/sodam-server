@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface TrailRepository extends JpaRepository<Trail, Integer> {
+    List<Trail> findTop10ByOrderByRatingDesc();
 }
