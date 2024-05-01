@@ -1,5 +1,6 @@
 package growthook.org.bamgang.attractions.controller;
 
+import growthook.org.bamgang.attractions.dto.response.GetAttractionPointDto;
 import growthook.org.bamgang.attractions.dto.response.GetAttractionResponseDto;
 import growthook.org.bamgang.attractions.service.AttractionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,10 @@ public class AttractionController {
     @GetMapping()
     public List<GetAttractionResponseDto> listAll(){
         return attractionService.selectAll();
+    }
+
+    @GetMapping("/{latitude}/{longitiude}")
+    public GetAttractionPointDto getAttractionPointDto(@PathVariable Double latitude, @PathVariable Double longitiude) {
+        return attractionService.getAttractionPointDto(latitude,longitiude);
     }
 }
