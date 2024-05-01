@@ -21,9 +21,16 @@ public class TrailController {
         return trailService.getTrailById(trailId);
     }
 
+    // 사용자 위치(위도, 경도) 주변 산책로 조회
     @GetMapping("/near/{latitude}/{longitude}")
     public List<GetTrailResponseDto> getNearTrail(@PathVariable("latitude") Double latitude, @PathVariable("longitude") Double longitude){
         return trailService.getNearTrail(latitude, longitude);
+    }
+
+    // 인기 산책로 조회
+    @GetMapping("/popular")
+    public List<GetTrailResponseDto> getPopularTrail(){
+        return trailService.getPopularTrail();
     }
 
 }
