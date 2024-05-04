@@ -75,7 +75,9 @@ public class MemberService {
     @Transactional
     public void saveFinishedWalk(FinishedWalkRequest finishedWalkRequest) {
         FinishedWalk finishedWalk = new FinishedWalk();
-        finishedWalk.setUserId(finishedWalkRequest.getUserId());
+        int userId = finishedWalkRequest.getUserId();
+        finishedWalk.setUserId(userId);
+        System.out.println(userId);
         finishedWalk.setReview(finishedWalkRequest.getReview());
         int trailId = finishedWalkRequest.getTrailId();
         finishedWalk.setTrailId(trailId);
@@ -83,6 +85,10 @@ public class MemberService {
         Trail trail = trailRepository.findById(trailId).orElseThrow(()->new RuntimeException());
         finishedWalk.setTrailTitle(trail.getTitle());
         finishedWalkRepository.save(finishedWalk);
+
+        // member 정보 업데이트
+        Member member = memberRepository.findById(userId).orElseThrow(()->new RuntimeException());
+        member.setFinishedCount(member.getFinishedCount() + 1);
     }
 
     // 찜한 산책로 조회
@@ -102,7 +108,7 @@ public class MemberService {
 
     //산책로 찜하기
     @Transactional
-    public void savePickedWalk(int userId,int trailId) {
+    public void     savePickedWalk(int userId,int trailId) {
         // member 정보 업데이트
         Member member = memberRepository.findById(userId).orElseThrow(()->new RuntimeException());
         member.setPickedCount(member.getPickedCount() + 1);
