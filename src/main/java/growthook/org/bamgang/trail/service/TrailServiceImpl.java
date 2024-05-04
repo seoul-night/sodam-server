@@ -1,5 +1,7 @@
 package growthook.org.bamgang.trail.service;
 
+import growthook.org.bamgang.members.domain.PickedWalk;
+import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.domain.TrailStart;
 import growthook.org.bamgang.trail.dto.response.GetTrailResponseDto;
@@ -18,15 +20,22 @@ public class TrailServiceImpl implements TrailService{
     public final TrailRepository trailRepository;
     public final TrailStartRepository trailStartRepository;
 
+    public final DataPickedWalkRepository dataPickedWalkRepository;
+
     // 산책로 상세정보 조회
     @Autowired
-    public TrailServiceImpl(TrailRepository trailRepository, TrailStartRepository trailStartRepository) {
+    public TrailServiceImpl(TrailRepository trailRepository, TrailStartRepository trailStartRepository, DataPickedWalkRepository dataPickedWalkRepository) {
         this.trailRepository = trailRepository;
         this.trailStartRepository = trailStartRepository;
+        this.dataPickedWalkRepository = dataPickedWalkRepository;
     }
-    public GetTrailResponseDto getTrailById(Integer trailId) {
+    @Override
+    public GetTrailResponseDto getTrailById(Integer trailId, Integer userId) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(() -> new RuntimeException("Trail not found with id: " + trailId));
+        PickedWalk pickedWalk = dataPickedWalkRepository.findByUserIdAndTrailId(userId,trailId);
+        boolean pick = true;
+        if(pickedWalk==null) pick = false;
         // Domain 객체를 Response DTO로 변환
         return GetTrailResponseDto.builder()
                 .id(trail.getId())
@@ -40,6 +49,7 @@ public class TrailServiceImpl implements TrailService{
                 .region(trail.getRegion())
                 .latitudeList(trail.getLatitudeList())
                 .longitudeList(trail.getLongitudeList())
+                .picked(pick)
                 .build();
     }
 

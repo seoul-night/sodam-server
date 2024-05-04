@@ -16,9 +16,9 @@ public class TrailController {
     }
 
     // 산책로 상세정보 조회
-    @GetMapping("/{trailId}")
-    public GetTrailResponseDto getTrailById(@PathVariable("trailId") Integer trailId){
-        return trailService.getTrailById(trailId);
+    @GetMapping("/{trailId}/{userId}")
+    public GetTrailResponseDto getTrailById(@PathVariable("trailId") Integer trailId, @PathVariable("userId") Integer userId){
+        return trailService.getTrailById(trailId, userId);
     }
 
     // 사용자 위치(위도, 경도) 주변 산책로 조회

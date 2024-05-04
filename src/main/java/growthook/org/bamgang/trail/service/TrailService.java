@@ -8,7 +8,7 @@ import java.util.List;
 public interface TrailService {
 
     // 산책로 상세정보 조회
-    public GetTrailResponseDto getTrailById(Integer trailId);
+    public GetTrailResponseDto getTrailById(Integer trailId, Integer userId);
 
     // 주변 산책로 조회
     List<GetTrailResponseDto> getNearTrail(Double latitude, Double longitude);

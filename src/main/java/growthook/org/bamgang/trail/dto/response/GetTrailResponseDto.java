@@ -19,5 +19,5 @@ public class GetTrailResponseDto {
     private String region;
     private Double[] latitudeList;
     private Double[] longitudeList;
-
+    private boolean picked;
 }
