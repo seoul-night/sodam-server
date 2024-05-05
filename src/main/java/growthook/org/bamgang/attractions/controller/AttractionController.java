@@ -28,8 +28,8 @@ public class AttractionController {
         return attractionService.selectAll();
     }
 
-    @GetMapping("/{latitude}/{longitiude}")
-    public GetAttractionPointDto getAttractionPointDto(@PathVariable Double latitude, @PathVariable Double longitiude) {
-        return attractionService.getAttractionPointDto(latitude,longitiude);
+    @GetMapping("/{latitude}/{longitude}")
+    public GetAttractionPointDto getAttractionPointDto(@PathVariable("latitude") Double latitude, @PathVariable("longitude") Double longitude) {
+        return attractionService.getAttractionPointDto(latitude,longitude);
     }
 }
