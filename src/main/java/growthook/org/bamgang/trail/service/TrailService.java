@@ -15,5 +15,8 @@ public interface TrailService {
 
     GetTrailResponseDto convertToResponseDto(Trail trail);
 
+    // 주변 산책로 조회
+    List<GetTrailResponseDto> getNearAttractionTrail(Double latitude, Double longitude);
+
     List<GetTrailResponseDto> getPopularTrail();
 }
