@@ -88,6 +88,41 @@ public class TrailServiceImpl implements TrailService{
     }
 
 
+    // 주변 산책로 조회
+    @Override
+    public List<GetTrailResponseDto> getNearAttractionTrail(Double latitude, Double longitude) {
+        // 조회할 범위 설정
+        Double minLatitude = latitude - 0.2;
+        Double maxLatitude = latitude + 0.2;
+        Double minLongitude = longitude - 0.3;
+        Double maxLongitude = longitude + 0.3;
+
+        // 해당 범위 내에 있는 주변 산책로들을 조회한다.
+        List<TrailStart> nearTrailStarts = trailStartRepository.findTrailIdsByStartLatitude1BetweenAndStartLongitude1BetweenAndStartLatitude2BetweenAndStartLongitude2BetweenAndStartLatitude3BetweenAndStartLongitude3Between(
+                // 3개의 출발점을 모두 조회해야 하므로, 같은 파라미터를 3개씩 보내야 한다.
+                minLatitude, maxLatitude,
+                minLongitude, maxLongitude,
+                minLatitude, maxLatitude,
+                minLongitude, maxLongitude,
+                minLatitude, maxLatitude,
+                minLongitude, maxLongitude
+        );
+
+        // 조회된 TrailStart들의 trailId를 사용해여 해당하는 Trail 정보 조회
+        List<Trail> nearByTrails = nearTrailStarts.stream()
+                .map(TrailStart::getTrailId)
+                .map(trailRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        // 가져온 리스트에서 산책로들을 GetTrailRepsponseDto로 변환하려 리스트로 반환함.
+        return nearByTrails.stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+
     // 인기있는 산책로 리스트 가져오기.
     @Override
     public List<GetTrailResponseDto> getPopularTrail() {
