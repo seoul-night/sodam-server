@@ -50,6 +50,7 @@ public class MemberService {
                 .finishedCount(member.getFinishedCount())
                 .pickedCount(member.getPickedCount())
                 .walkedDay(member.getWalkedDay())
+                .profile(member.getProfile())
                 .build();
         return getMemberResponseDto;
     }

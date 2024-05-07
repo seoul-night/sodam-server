@@ -15,4 +15,6 @@ public class GetMemberResponseDto {
     private Integer finishedCount;
 
     private Integer pickedCount;
+
+    private String profile;
 }
