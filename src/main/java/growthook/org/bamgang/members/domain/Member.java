@@ -23,4 +23,6 @@ public class Member {
     private Integer finishedCount;
 
     private Integer pickedCount;
+
+    private String profile;
 }
