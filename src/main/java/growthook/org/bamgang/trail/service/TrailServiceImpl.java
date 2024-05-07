@@ -63,7 +63,7 @@ public class TrailServiceImpl implements TrailService{
         Double maxLongitude = longitude + 0.01;
 
         // 해당 범위 내에 있는 주변 산책로들을 조회한다.
-        List<TrailStart> nearTrailStarts = trailStartRepository.findTrailIdsByStartLatitude1BetweenAndStartLongitude1BetweenAndStartLatitude2BetweenAndStartLongitude2BetweenAndStartLatitude3BetweenAndStartLongitude3Between(
+        List<Integer> nearTrailStarts = trailStartRepository.findTrailIdsByCoordinates(
                 // 3개의 출발점을 모두 조회해야 하므로, 같은 파라미터를 3개씩 보내야 한다.
                 minLatitude, maxLatitude,
                 minLongitude, maxLongitude,
@@ -75,7 +75,6 @@ public class TrailServiceImpl implements TrailService{
 
         // 조회된 TrailStart들의 trailId를 사용해여 해당하는 Trail 정보 조회
         List<Trail> nearByTrails = nearTrailStarts.stream()
-                .map(TrailStart::getTrailId)
                 .map(trailRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -98,7 +97,7 @@ public class TrailServiceImpl implements TrailService{
         Double maxLongitude = longitude + 0.3;
 
         // 해당 범위 내에 있는 주변 산책로들을 조회한다.
-        List<TrailStart> nearTrailStarts = trailStartRepository.findTrailIdsByStartLatitude1BetweenAndStartLongitude1BetweenAndStartLatitude2BetweenAndStartLongitude2BetweenAndStartLatitude3BetweenAndStartLongitude3Between(
+        List<Integer> nearTrailStarts = trailStartRepository.findTrailIdsByCoordinates(
                 // 3개의 출발점을 모두 조회해야 하므로, 같은 파라미터를 3개씩 보내야 한다.
                 minLatitude, maxLatitude,
                 minLongitude, maxLongitude,
@@ -110,7 +109,6 @@ public class TrailServiceImpl implements TrailService{
 
         // 조회된 TrailStart들의 trailId를 사용해여 해당하는 Trail 정보 조회
         List<Trail> nearByTrails = nearTrailStarts.stream()
-                .map(TrailStart::getTrailId)
                 .map(trailRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
