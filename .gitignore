@@ -39,3 +39,4 @@ out/
 
 ######## SECRET KEY INFO
 /src/main/resources/application-DATABASE-KEY.properties
+/src/main/resources/application-API-KEY.properties
