@@ -131,15 +131,12 @@ public class MemberController {
             String nickname = userInfoJsonNode.get("kakao_account").get("profile").get("nickname").asText();
             String profile = userInfoJsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
 
-            MemberToken memberToken = new MemberToken();
-            memberToken.setId(id);
-            memberToken.setProfile(profile);
-            memberToken.setNickName(nickname);
+            MemberToken memberToken = memberService.createMember(id,profile,nickname);
 
             String token = jwtUtil.generateToken(memberToken);
 
             // 로그인
-            String redirectUrl = "https://ddubam.site/home";
+            String redirectUrl = "https://ddubam.site/home?token="+token;
             URI redirectUriWithParams = new URI(redirectUrl);
 
             // 리다이렉트

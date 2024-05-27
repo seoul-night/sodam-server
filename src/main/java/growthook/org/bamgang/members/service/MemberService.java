@@ -1,5 +1,8 @@
 package growthook.org.bamgang.members.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import growthook.org.bamgang.members.domain.FinishedWalk;
 import growthook.org.bamgang.members.domain.Member;
 import growthook.org.bamgang.members.domain.PickedWalk;
@@ -7,18 +10,27 @@ import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
 import growthook.org.bamgang.members.dto.response.GetMemberResponseDto;
 import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
+import growthook.org.bamgang.members.dto.token.MemberToken;
+import growthook.org.bamgang.members.jwtUtil.JWTUtil;
 import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
 import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.members.repository.MemberRepository;
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.repository.TrailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -33,12 +45,49 @@ public class MemberService {
 
     public final TrailRepository trailRepository;
 
+
+    @Value("${kakao-key}")
+    private String apiKey;
+
     @Autowired
     public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository) {
         this.memberRepository = memberRepository;
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
         this.trailRepository = trailRepository;
+    }
+
+    // Member 추가
+    @Transactional
+    public  MemberToken createMember(String passward,String profile,String nickname){
+        Member findMember = memberRepository.findByPassword(passward);
+        if(findMember!=null){
+            MemberToken memberToken = new MemberToken();
+            memberToken.setId(findMember.getUserId()+"");
+            memberToken.setProfile(profile);
+            memberToken.setNickName(nickname);
+            return memberToken;
+        }
+        try {
+            Member member = new Member();
+            member.setNickName(nickname);
+            member.setProfile(profile);
+            member.setPassword(passward);
+            member.setExp(0);
+            member.setPickedCount(0);
+            member.setFinishedCount(0);
+            member.setWalkedDay(0);
+            memberRepository.save(member);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        findMember = memberRepository.findByPassword(passward);
+
+        MemberToken memberToken = new MemberToken();
+        memberToken.setId(findMember.getUserId()+"");
+        memberToken.setProfile(profile);
+        memberToken.setNickName(nickname);
+        return memberToken;
     }
 
     // Memeber 조회
