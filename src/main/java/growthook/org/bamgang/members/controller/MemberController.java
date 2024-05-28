@@ -76,8 +76,8 @@ public class MemberController {
     //kakao로그인
     @GetMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin()throws URISyntaxException {
-//        String redirectUri = "https://ddubam.site/api/members/kakao/oauth"; //배포
-        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; //테스트
+        String redirectUri = "https://ddubam.site/api/members/kakao/oauth"; //배포
+//        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; //테스트
         String kakaoAuthUri = "https://kauth.kakao.com/oauth/authorize?client_id=" + apiKey + "&redirect_uri=" + redirectUri + "&response_type=code";
         // 리다이렉트
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -88,8 +88,8 @@ public class MemberController {
 
     @GetMapping("/kakao/oauth")
     public ResponseEntity<?> kakao(@RequestParam("code") String code) throws URISyntaxException {
-//        String redirectUri = "https://ddubam.site/api/members/kakao/oauth"; // 배포
-        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; // 테스트
+        String redirectUri = "https://ddubam.site/api/members/kakao/oauth"; // 배포
+//        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; // 테스트
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
         String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
 
@@ -136,7 +136,7 @@ public class MemberController {
             String token = jwtUtil.generateToken(memberToken);
 
             // 로그인
-            String redirectUrl = "https://ddubam.site/home?token="+token;
+            String redirectUrl = "https://ddubam.site/home";
             URI redirectUriWithParams = new URI(redirectUrl);
 
             // 리다이렉트
