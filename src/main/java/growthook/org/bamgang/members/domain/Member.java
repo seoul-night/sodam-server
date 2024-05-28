@@ -12,9 +12,12 @@ import lombok.Setter;
 public class Member {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
     private String nickName;
+
+    private String password;
 
     private Integer exp;
 
