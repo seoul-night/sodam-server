@@ -136,8 +136,8 @@ public class MemberController {
             String token = jwtUtil.generateToken(memberToken);
 
             // 로그인
-//            String redirectUrl = "https://ddubam.site/home?token="+token; // 배포
-            String redirectUrl =  "http://localhost:3000/loading?token=" + token; //테스트
+            String redirectUrl = "https://ddubam.site/home?token="+token; // 배포
+//            String redirectUrl =  "http://localhost:3000/loading?token=" + token; //테스트
             URI redirectUriWithParams = new URI(redirectUrl);
 //            System.out.println(token);
             // 리다이렉트
