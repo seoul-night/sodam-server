@@ -149,5 +149,23 @@ public class MemberController {
             return ResponseEntity.status(500).body("로그인 실패");
         }
     }
+
+    //logout
+    @GetMapping("/kakao/logout")
+    public ResponseEntity<?> logout()
+    {
+        try {
+            String redirectUrl = "https://kauth.kakao.com/oauth/logout?client_id="+apiKey+"&logout_redirect_uri=https://ddubam.site";
+            URI redirectUriWithParams = new URI(redirectUrl);
+            // 리다이렉트
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(redirectUriWithParams);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("로그아웃 실패");
+        }
+    }
 }
 
