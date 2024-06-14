@@ -7,6 +7,7 @@ import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.trail.domain.Safety;
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.dto.response.GetNewTrailResponseDto;
+import growthook.org.bamgang.trail.dto.response.GetSearchTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetTrailResponseDto;
 import growthook.org.bamgang.trail.repository.SafetyRepository;
 import growthook.org.bamgang.trail.repository.TrailRepository;
@@ -258,7 +259,6 @@ public class TrailServiceImpl implements TrailService {
                 }else{
                     dto.setSafetyPercent(10);
                 }
-                responseList.add(dto);
 
                 Trail testDto = new Trail();
                 testDto.setTitle(dto.getTitle());
@@ -270,9 +270,12 @@ public class TrailServiceImpl implements TrailService {
                 testDto.setRegion(dto.getRegion());
                 testDto.setLatitudeList(dto.getLatitudeList());
                 testDto.setLongitudeList(dto.getLongitudeList());
-                testDto.setRating(10.0);
-//                int id = trailRepository.findMaxTrailId();
-//                testDto.setId(id+1);
+                testDto.setRating(1.0);
+                int id = trailRepository.findMaxTrailId();
+                dto.setId(id+1);
+                dto.setRating(1.0);
+                responseList.add(dto);
+
                 trailRepository.save(testDto);
         } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -282,25 +285,128 @@ public class TrailServiceImpl implements TrailService {
         return responseList;
     }
 
+    @Override
+    public GetSearchTrailResponseDto getSearchTrail(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude) {
+        // 시작점과 도착점을 현재 위치로 설정
+        String startName = "Start Point";
+        String endName = "End Point";
+
+        try {
+            //시작점 도착점으로 TMAP API를 통해서 경로 검색
+            String routeData = apiService.getRouteData(startLongitude, startLatitude, endLongitude, endLatitude, startName, endName);
+
+            // GeoJSON 데이터 파싱
+            JSONObject jsonObject = new JSONObject(routeData);
+            JSONArray features = jsonObject.getJSONArray("features");
+
+            List<Double> latitudes = new ArrayList<>();
+            List<Double> longitudes = new ArrayList<>();
+            double totalTime = 0;
+            double totalDistance = 0;
+
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject feature = features.getJSONObject(i);
+                JSONObject geometry = feature.getJSONObject("geometry");
+                JSONObject properties = feature.getJSONObject("properties");
+
+                String type = geometry.getString("type");
+                if (type.equals("LineString")) {
+                    JSONArray coordinates = geometry.getJSONArray("coordinates");
+                    for (int j = 0; j < coordinates.length(); j++) {
+                        JSONArray coord = coordinates.getJSONArray(j);
+                        longitudes.add(coord.getDouble(0));
+                        latitudes.add(coord.getDouble(1));
+                    }
+
+                    totalTime += properties.getDouble("time");
+                    totalDistance += properties.getDouble("distance");
+                }
+            }
+
+            Double[] latitudeList = latitudes.toArray(new Double[0]);
+            Double[] longitudeList = longitudes.toArray(new Double[0]);
+            Double time = totalTime / 3600; // convert seconds to hours
+            Double distance = totalDistance / 1000; // convert meters to kilometers
+
+            time = Math.round(time * 100) / 100.0;
+            distance = Math.round(distance * 100) / 100.0;
+
+            // 시설물 찾기
+            List<Safety> nearbyFacilities = findNearbyFacilities(latitudeList, longitudeList, 100.0);
+            List<Integer> safetyTypeList = new ArrayList<>();
+            List<Double> safetyLatitudeList = new ArrayList<>();
+            List<Double> safetyLontiudeList = new ArrayList<>();
+
+            long cctvCount = 0;
+            long lightCount = 0;
+            for(Safety safety : nearbyFacilities){
+                safetyTypeList.add(Integer.parseInt(safety.getType()));
+                if(safety.getType().equals("305")){
+                    lightCount++;
+                }else{
+//                    System.out.println(safety.getType());
+                    cctvCount++;
+                }
+                safetyLatitudeList.add(Double.parseDouble(safety.getLatitude()));
+                safetyLontiudeList.add(Double.parseDouble(safety.getLongitude()));
+            }
+
+            Integer[] safetyType = safetyTypeList.toArray(new Integer[0]);
+            Double[] safetyLatitude = safetyLatitudeList.toArray(new Double[0]);
+            Double[] safetyLontitude = safetyLontiudeList.toArray(new Double[0]);
+
+            int safetyPercent = 0;
+
+            if(distance/(cctvCount+lightCount)<0.01){
+                safetyPercent=100;
+            }else if((cctvCount+lightCount)/distance<0.1){
+                safetyPercent=80;
+            }else if((cctvCount+lightCount)/distance<0.2){
+                safetyPercent=50;
+            }else if((cctvCount+lightCount)/distance<0.4){
+                safetyPercent=30;
+            }else{
+                safetyPercent=10;
+            }
+
+            return GetSearchTrailResponseDto.builder()
+                    .latitudeList(latitudeList)
+                    .longitudeList(longitudeList)
+                    .time(time)
+                    .distance(distance)
+                    .safetyLongitudeList(safetyLontitude)
+                    .safetyLatitudeList(safetyLatitude)
+                    .safetyTypeList(safetyType)
+                    .cctvCount(cctvCount)
+                    .lightCount(lightCount)
+                    .safetyPercent(safetyPercent)
+                    .build();
+        }catch (Exception e){
+            e.printStackTrace();
+            return new GetSearchTrailResponseDto();
+        }
+    }
+
     // 안전 시설물 검색 함수
     private List<Safety> findNearbyFacilities(Double[] latitudeList, Double[] longitudeList, double radiusMeters) {
         List<Safety> nearbyFacilities = new ArrayList<>();
 
         List<Safety> allFacilities = safetyRepository.findAll(); // DB에서 모든 시설물 조회
 
-        for (int i = 0; i < latitudeList.length; i++) {
-            Double lat = latitudeList[i];
-            Double lon = longitudeList[i];
+        A: for (Safety facility : allFacilities) {
+            String facilityLatStr = facility.getLatitude();
+            String facilityLonStr = facility.getLongitude();
+            for (int i = 0; i < latitudeList.length; i++) {
+                Double lat = latitudeList[i];
+                Double lon = longitudeList[i];
 
-            for (Safety facility : allFacilities) {
-                String facilityLatStr = facility.getLatitude();
-                String facilityLonStr = facility.getLongitude();
                 if (facilityLatStr != null && facilityLonStr != null) {
                     Double facilityLat = Double.parseDouble(facilityLatStr);
                     Double facilityLon = Double.parseDouble(facilityLonStr);
 
                     if (distance(lat, lon, facilityLat, facilityLon) <= radiusMeters) {
                         nearbyFacilities.add(facility);
+                        continue A;
                     }
                 }
             }
