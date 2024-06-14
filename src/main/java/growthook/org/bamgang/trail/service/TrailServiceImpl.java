@@ -139,9 +139,9 @@ public class TrailServiceImpl implements TrailService {
         List<GetNewTrailResponseDto> responseList = new ArrayList<>();
         // 현재 위치 기반 관광지 2개 선택
         List<Attraction> attractions = attractionRepository.findNearestAttractions(latitude,longitude);
-        for(int T = 0;T<3;T++) {
+        for(int T = 0;T<5;T++) {
             Attraction atrraction1 = attractions.get(T);
-            Attraction atrraction2 = attractions.get(T+3);
+            Attraction atrraction2 = attractions.get(T+5);
             // 관광지를 경유지로 활용하여 산책로 생성
             // 첫번째 경유지 좌표
             Double latitude1 = Double.parseDouble(atrraction1.getAttractionLatitude());
@@ -259,6 +259,21 @@ public class TrailServiceImpl implements TrailService {
                     dto.setSafetyPercent(10);
                 }
                 responseList.add(dto);
+
+                Trail testDto = new Trail();
+                testDto.setTitle(dto.getTitle());
+                testDto.setDetail(dto.getDetail());
+                testDto.setLevel(dto.getLevel());
+                testDto.setImage(dto.getImage());
+                testDto.setTime(dto.getTime());
+                testDto.setDistance(dto.getDistance());
+                testDto.setRegion(dto.getRegion());
+                testDto.setLatitudeList(dto.getLatitudeList());
+                testDto.setLongitudeList(dto.getLongitudeList());
+                testDto.setRating(10.0);
+//                int id = trailRepository.findMaxTrailId();
+//                testDto.setId(id+1);
+                trailRepository.save(testDto);
         } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 return responseList;
