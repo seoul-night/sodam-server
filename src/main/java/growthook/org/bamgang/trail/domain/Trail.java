@@ -2,10 +2,12 @@ package growthook.org.bamgang.trail.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "trail")
 @Getter
+@Setter
 public class Trail {
 
     @Id
