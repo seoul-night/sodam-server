@@ -7,6 +7,7 @@ import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.trail.domain.Safety;
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.dto.response.GetNewTrailResponseDto;
+import growthook.org.bamgang.trail.dto.response.GetPopularTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetSearchTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetTrailResponseDto;
 import growthook.org.bamgang.trail.repository.SafetyRepository;
@@ -384,6 +385,96 @@ public class TrailServiceImpl implements TrailService {
         }catch (Exception e){
             e.printStackTrace();
             return new GetSearchTrailResponseDto();
+        }
+    }
+
+    @Override
+    public GetPopularTrailResponseDto getPopularTrail(Integer trailId, Integer userId, Double latitude, Double longitude) {
+        // id를 통해서 인기 산책로 정보 가져오기
+        Trail trail = trailRepository.findById(trailId)
+                .orElseThrow(() -> new RuntimeException("Trail not found with id: " + trailId));
+        // userId를 통해서 pick여부 확인
+        PickedWalk pickedWalk = dataPickedWalkRepository.findByUserIdAndTrailId(userId, trailId);
+        boolean pick = pickedWalk != null;
+
+        // 산책로 까지 가는 경로 정보 가져오기
+        try{
+            String startName = "Start Point";
+            String endName = "End Point";
+
+            //시작점 도착점으로 TMAP API를 통해서 경로 검색
+            String routeData = apiService.getRouteData(longitude, latitude, trail.getTrailStart().getStartLongitude1(), trail.getTrailStart().getStartLatitude1(), startName, endName);
+
+            // GeoJSON 데이터 파싱
+            JSONObject jsonObject = new JSONObject(routeData);
+            JSONArray features = jsonObject.getJSONArray("features");
+
+            List<Double> latitudes = new ArrayList<>();
+            List<Double> longitudes = new ArrayList<>();
+            double totalTime = trail.getTime() *3600;
+            double totalDistance = trail.getDistance()*1000;
+
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject feature = features.getJSONObject(i);
+                JSONObject geometry = feature.getJSONObject("geometry");
+                JSONObject properties = feature.getJSONObject("properties");
+
+                String type = geometry.getString("type");
+                if (type.equals("LineString")) {
+                    JSONArray coordinates = geometry.getJSONArray("coordinates");
+                    for (int j = 0; j < coordinates.length(); j++) {
+                        JSONArray coord = coordinates.getJSONArray(j);
+                        longitudes.add(coord.getDouble(0));
+                        latitudes.add(coord.getDouble(1));
+                    }
+
+                    totalTime += properties.getDouble("time");
+                    totalDistance += properties.getDouble("distance");
+                }
+            }
+
+            Double[] latitudeList = latitudes.toArray(new Double[0]);
+            Double[] longitudeList = longitudes.toArray(new Double[0]);
+            Double time = totalTime / 3600; // convert seconds to hours
+            Double distance = totalDistance / 1000; // convert meters to kilometers
+
+            time = Math.round(time * 100) / 100.0;
+            distance = Math.round(distance * 100) / 100.0;
+
+
+            // 시설물 찾기
+            List<Safety> nearbyFacilities = findNearbyFacilities(latitudeList, longitudeList, 100.0);
+            List<Double> safetyLatitudeList = new ArrayList<>();
+            List<Double> safetyLontiudeList = new ArrayList<>();
+
+            for(Safety safety : nearbyFacilities){
+                safetyLatitudeList.add(Double.parseDouble(safety.getLatitude()));
+                safetyLontiudeList.add(Double.parseDouble(safety.getLongitude()));
+            }
+
+            Double[] safetyLatitude = safetyLatitudeList.toArray(new Double[0]);
+            Double[] safetyLontitude = safetyLontiudeList.toArray(new Double[0]);
+
+            return GetPopularTrailResponseDto.builder()
+                    .detail(trail.getDetail())
+                    .distance(distance)
+                    .image(trail.getImage())
+                    .latitudeList(trail.getLatitudeList())
+                    .longitudeList(trail.getLongitudeList())
+                    .level(trail.getLevel())
+                    .time(time)
+                    .startLatitudeList(latitudeList)
+                    .startLongitudeList(longitudeList)
+                    .trailId(trail.getId())
+                    .title(trail.getTitle())
+                    .picked(pick)
+                    .rating(trail.getRating())
+                    .region(trail.getRegion())
+                    .safetyLatitudeList(safetyLatitude)
+                    .safetyLongitudeList(safetyLontitude)
+                    .build();
+        }catch (Exception e){
+            return null;
         }
     }
 
