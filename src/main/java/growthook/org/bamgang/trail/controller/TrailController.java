@@ -2,6 +2,7 @@ package growthook.org.bamgang.trail.controller;
 
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.dto.response.GetNewTrailResponseDto;
+import growthook.org.bamgang.trail.dto.response.GetPopularTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetSearchTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetTrailResponseDto;
 import growthook.org.bamgang.trail.service.TrailService;
@@ -45,6 +46,12 @@ public class TrailController {
     @GetMapping("/popular")
     public List<GetTrailResponseDto> getPopularTrail(){
         return trailService.getPopularTrail();
+    }
+
+    // 인기 산책로 이동 경로 및 산책로 조회
+    @GetMapping("/popular/route/{trailId}/{userId}/{latitude}/{longitude}")
+    public GetPopularTrailResponseDto getPopularTrailRoute(@PathVariable("trailId") Integer trailId, @PathVariable("userId") Integer userId, @PathVariable("latitude") Double latitude, @PathVariable("longitude") Double longitude) {
+        return trailService.getPopularTrail(trailId, userId,latitude,longitude);
     }
 
 }

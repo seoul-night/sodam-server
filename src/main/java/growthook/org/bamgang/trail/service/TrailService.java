@@ -2,6 +2,7 @@ package growthook.org.bamgang.trail.service;
 
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.dto.response.GetNewTrailResponseDto;
+import growthook.org.bamgang.trail.dto.response.GetPopularTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetSearchTrailResponseDto;
 import growthook.org.bamgang.trail.dto.response.GetTrailResponseDto;
 
@@ -27,4 +28,7 @@ public interface TrailService {
 
     //경로 생성
     GetSearchTrailResponseDto getSearchTrail(Double startLatitude, Double startLongitude, Double endLatitude, Double endLongitude);
+
+    // 인기 산책로 경로 조회
+    GetPopularTrailResponseDto getPopularTrail(Integer trailId, Integer userId, Double latitude, Double longitude);
 }
