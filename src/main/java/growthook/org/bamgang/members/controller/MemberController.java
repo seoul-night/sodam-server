@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.request.PickedWalkRequest;
-import growthook.org.bamgang.members.dto.response.GetFinishedDestinationResponseDto;
-import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
-import growthook.org.bamgang.members.dto.response.GetMemberResponseDto;
-import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
+import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.jwtUtil.JWTUtil;
 import growthook.org.bamgang.members.service.MemberService;
@@ -89,6 +86,24 @@ public class MemberController {
         int userId = pickedWalk.getUserId();
         int trailId = pickedWalk.getTrailId();
         memberService.deletePickedWalk(userId,trailId);
+    }
+
+    // 최근 검색어 저장
+    @PostMapping("/search/{userId}/{search}")
+    public void postSearchWord(@PathVariable("userId") int userId, @PathVariable("search") String search){
+        memberService.saveSearch(userId,search);
+    }
+
+    // 최근 검색어 조회
+    @GetMapping("/search/{userId}")
+    public List<GetSearchWordResponseDto> getSearchWords(@PathVariable("userId") int userId){
+        return memberService.getSearch(userId);
+    }
+
+    // 최근 검색어 삭제
+    @DeleteMapping("/search/{userId}/{searchId}")
+    public void deleteSearchWords(@PathVariable("userId") int userId, @PathVariable("searchId") int searchId){
+        memberService.deleteSearch(userId,searchId);
     }
 
     //kakao로그인

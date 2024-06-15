@@ -1,37 +1,17 @@
 package growthook.org.bamgang.members.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import growthook.org.bamgang.members.domain.FinishedDestination;
-import growthook.org.bamgang.members.domain.FinishedWalk;
-import growthook.org.bamgang.members.domain.Member;
-import growthook.org.bamgang.members.domain.PickedWalk;
+import growthook.org.bamgang.members.domain.*;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
-import growthook.org.bamgang.members.dto.response.GetFinishedDestinationResponseDto;
-import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
-import growthook.org.bamgang.members.dto.response.GetMemberResponseDto;
-import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
+import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
-import growthook.org.bamgang.members.jwtUtil.JWTUtil;
-import growthook.org.bamgang.members.repository.DataFinishedDestintationRepository;
-import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
-import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
-import growthook.org.bamgang.members.repository.MemberRepository;
+import growthook.org.bamgang.members.repository.*;
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.repository.TrailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,17 +31,20 @@ public class MemberService {
 
     private final DataFinishedDestintationRepository dataFinishedDestintationRepository;
 
+    private final SearchWordRepository searchWordRepository;
+
 
     @Value("${kakao-key}")
     private String apiKey;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository) {
+    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository, SearchWordRepository searchWordRepository) {
         this.memberRepository = memberRepository;
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
         this.trailRepository = trailRepository;
         this.dataFinishedDestintationRepository = dataFinishedDestintationRepository;
+        this.searchWordRepository = searchWordRepository;
     }
 
     // Member 추가
@@ -210,7 +193,7 @@ public class MemberService {
 
     //산책로 찜하기
     @Transactional
-    public void     savePickedWalk(int userId,int trailId) {
+    public void savePickedWalk(int userId,int trailId) {
         // member 정보 업데이트
         Member member = memberRepository.findById(userId).orElseThrow(()->new RuntimeException());
         member.setPickedCount(member.getPickedCount() + 1);
@@ -237,6 +220,39 @@ public class MemberService {
         // 찜한 산책로 제거
         PickedWalk pickedWalk = dataPickedWalkRepository.findByUserIdAndTrailId(userId, trailId);
         dataPickedWalkRepository.delete(pickedWalk);
+    }
+
+    @Transactional
+    // 최근 검색어 저장
+    public void saveSearch(int userId, String word){
+        SearchWord searchWord = new SearchWord();
+        searchWord.setWord(word);
+        searchWord.setUserId(userId);
+        searchWordRepository.save(searchWord);
+    }
+
+    // 최근 검색어 조회
+    public List<GetSearchWordResponseDto> getSearch(int userId){
+        List<SearchWord> searchWords = searchWordRepository.getSearchWordsByUserIdOrderBySearchTimeDesc(userId);
+        List<GetSearchWordResponseDto> searchList = new ArrayList<>();
+        for(SearchWord searchWord : searchWords){
+            GetSearchWordResponseDto dto = GetSearchWordResponseDto.builder()
+                    .word(searchWord.getWord())
+                    .id(searchWord.getId())
+                    .build();
+            searchList.add(dto);
+        }
+        return searchList;
+    }
+
+    @Transactional
+    // 최근 검색어 삭제
+    public void deleteSearch(int userId, int id){
+        if(id == 0){
+            searchWordRepository.deleteAllByUserId(userId);
+        }else{
+            searchWordRepository.deleteById(id);
+        }
     }
 
 }
