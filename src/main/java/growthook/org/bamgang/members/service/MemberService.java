@@ -104,6 +104,16 @@ public class MemberService {
         return getMemberResponseDto;
     }
 
+    //Member 삭제
+    @Transactional
+    public void deleteMember(int id) {
+        if (memberRepository.existsById(id)) {
+            memberRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("ID가 " + id + "인 멤버가 존재하지 않습니다");
+        }
+    }
+
     // 완료한 산책로 조회
     public List<GetFinishedWalkResponseDto> findFinishedWalkById(int id){
         List<FinishedWalk> walks = finishedWalkRepository.findAllByUserId(id);
