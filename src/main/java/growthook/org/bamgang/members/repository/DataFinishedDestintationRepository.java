@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DataFinishedDestintationRepository extends JpaRepository<FinishedDestination, Integer> {
-
+    List<FinishedDestination> findAllByUserId(Integer id);
 }
