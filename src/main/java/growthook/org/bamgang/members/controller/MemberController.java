@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.request.PickedWalkRequest;
+import growthook.org.bamgang.members.dto.response.GetFinishedDestinationResponseDto;
 import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
 import growthook.org.bamgang.members.dto.response.GetMemberResponseDto;
 import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
@@ -52,6 +53,12 @@ public class MemberController {
     public List<GetFinishedWalkResponseDto> getUserInfo3(@PathVariable int id){
         List<GetFinishedWalkResponseDto> walks = memberService.findFinishedWalkById(id);
         return walks;
+    }
+
+    @GetMapping("/walks/search/complete/{userId}")
+    public List<GetFinishedDestinationResponseDto> getUserSearchComplete(@PathVariable("userId") int userId){
+        List<GetFinishedDestinationResponseDto> finsheds = memberService.findFinishedSearchById(userId);
+        return finsheds;
     }
 
     @PostMapping("/walks/complete")
