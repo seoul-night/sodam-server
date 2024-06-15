@@ -42,6 +42,11 @@ public class MemberController {
         return getMemberResponseDto;
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteUserInfo(@PathVariable("id") int id){
+        memberService.deleteMember(id);
+    }
+
     @GetMapping("/walks/complete/{id}")
     public List<GetFinishedWalkResponseDto> getUserInfo3(@PathVariable int id){
         List<GetFinishedWalkResponseDto> walks = memberService.findFinishedWalkById(id);
