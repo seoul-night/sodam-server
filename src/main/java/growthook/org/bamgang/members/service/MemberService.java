@@ -3,15 +3,18 @@ package growthook.org.bamgang.members.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import growthook.org.bamgang.members.domain.FinishedDestination;
 import growthook.org.bamgang.members.domain.FinishedWalk;
 import growthook.org.bamgang.members.domain.Member;
 import growthook.org.bamgang.members.domain.PickedWalk;
+import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
 import growthook.org.bamgang.members.dto.response.GetMemberResponseDto;
 import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
 import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.jwtUtil.JWTUtil;
+import growthook.org.bamgang.members.repository.DataFinishedDestintationRepository;
 import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
 import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.members.repository.MemberRepository;
@@ -45,16 +48,19 @@ public class MemberService {
 
     public final TrailRepository trailRepository;
 
+    private final DataFinishedDestintationRepository dataFinishedDestintationRepository;
+
 
     @Value("${kakao-key}")
     private String apiKey;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository) {
+    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository) {
         this.memberRepository = memberRepository;
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
         this.trailRepository = trailRepository;
+        this.dataFinishedDestintationRepository = dataFinishedDestintationRepository;
     }
 
     // Member 추가
@@ -145,6 +151,23 @@ public class MemberService {
         Trail trail = trailRepository.findById(trailId).orElseThrow(()->new RuntimeException());
         finishedWalk.setTrailTitle(trail.getTitle());
         finishedWalkRepository.save(finishedWalk);
+
+        // member 정보 업데이트
+        Member member = memberRepository.findById(userId).orElseThrow(()->new RuntimeException());
+        member.setFinishedCount(member.getFinishedCount() + 1);
+    }
+
+
+    // 완료한 경로 후기 추가
+    @Transactional
+    public void saveFinishedDestination(FinishedDestinationRequest finishedDestinationRequest) {
+        FinishedDestination finishedDestination = new FinishedDestination();
+        int userId = finishedDestinationRequest.getUserId();
+        finishedDestination.setUserId(userId);
+        finishedDestination.setReview(finishedDestinationRequest.getReview());
+        finishedDestination.setDestinationId(finishedDestinationRequest.getDestinationId());
+        finishedDestination.setDestinationTitle(finishedDestinationRequest.getDestinationTitle());
+        dataFinishedDestintationRepository.save(finishedDestination);
 
         // member 정보 업데이트
         Member member = memberRepository.findById(userId).orElseThrow(()->new RuntimeException());

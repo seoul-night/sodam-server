@@ -2,6 +2,7 @@ package growthook.org.bamgang.members.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.request.PickedWalkRequest;
 import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
@@ -56,6 +57,11 @@ public class MemberController {
     @PostMapping("/walks/complete")
     public void postUserInfo3(@RequestBody FinishedWalkRequest walk){
         memberService.saveFinishedWalk(walk);
+    }
+
+    @PostMapping("/walks/search/complete")
+    public void postSearchComplete(@RequestBody FinishedDestinationRequest walk){
+        memberService.saveFinishedDestination(walk);
     }
 
     @GetMapping("/walks/select/{id}")
