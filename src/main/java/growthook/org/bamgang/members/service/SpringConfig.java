@@ -1,6 +1,6 @@
 package growthook.org.bamgang.members.service;
 
-import growthook.org.bamgang.members.jwtUtil.JWTUtil;
+import growthook.org.bamgang.members.repository.DataFinishedDestintationRepository;
 import growthook.org.bamgang.members.repository.DataFinishedWalkRepository;
 import growthook.org.bamgang.members.repository.DataPickedWalkRepository;
 import growthook.org.bamgang.members.repository.MemberRepository;
@@ -20,16 +20,19 @@ public class SpringConfig {
 
     private final TrailRepository trailRepository;
 
+    private final DataFinishedDestintationRepository dataFinishedDestintationRepository;
+
     @Autowired
-    public SpringConfig(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository) {
+    public SpringConfig(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository) {
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
         this.memberRepository = memberRepository;
         this.trailRepository = trailRepository;
+        this.dataFinishedDestintationRepository = dataFinishedDestintationRepository;
     }
 
     @Bean
     public MemberService memberService() {
-        return new MemberService(memberRepository,finishedWalkRepository, dataPickedWalkRepository,trailRepository);
+        return new MemberService(memberRepository,finishedWalkRepository, dataPickedWalkRepository,trailRepository,dataFinishedDestintationRepository);
     }
 }
