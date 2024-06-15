@@ -245,4 +245,14 @@ public class MemberService {
         return searchList;
     }
 
+    @Transactional
+    // 최근 검색어 삭제
+    public void deleteSearch(int userId, int id){
+        if(id == 0){
+            searchWordRepository.deleteAllByUserId(userId);
+        }else{
+            searchWordRepository.deleteById(id);
+        }
+    }
+
 }

@@ -100,6 +100,12 @@ public class MemberController {
         return memberService.getSearch(userId);
     }
 
+    // 최근 검색어 삭제
+    @DeleteMapping("/search/{userId}/{searchId}")
+    public void deleteSearchWords(@PathVariable("userId") int userId, @PathVariable("searchId") int searchId){
+        memberService.deleteSearch(userId,searchId);
+    }
+
     //kakao로그인
     @GetMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin()throws URISyntaxException {
