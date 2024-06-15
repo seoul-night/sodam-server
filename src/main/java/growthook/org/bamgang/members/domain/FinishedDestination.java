@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -27,5 +29,5 @@ public class FinishedDestination {
     private String review;
 
     @Column(insertable = false, name = "finished_date")
-    private String finishedDate;
+    private LocalDate finishedDate;
 }
