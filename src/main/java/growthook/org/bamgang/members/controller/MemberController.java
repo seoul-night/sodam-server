@@ -89,15 +89,15 @@ public class MemberController {
     }
 
     // 최근 검색어 저장
-    @PostMapping("search/{userId}/{search}")
+    @PostMapping("/search/{userId}/{search}")
     public void postSearchWord(@PathVariable("userId") int userId, @PathVariable("search") String search){
         memberService.saveSearch(userId,search);
     }
 
     // 최근 검색어 조회
-    @GetMapping("/members/search/{userId}")
+    @GetMapping("/search/{userId}")
     public List<GetSearchWordResponseDto> getSearchWords(@PathVariable("userId") int userId){
-        return memberService.
+        return memberService.getSearch(userId);
     }
 
     //kakao로그인

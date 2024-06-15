@@ -3,10 +3,7 @@ package growthook.org.bamgang.members.service;
 import growthook.org.bamgang.members.domain.*;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
-import growthook.org.bamgang.members.dto.response.GetFinishedDestinationResponseDto;
-import growthook.org.bamgang.members.dto.response.GetFinishedWalkResponseDto;
-import growthook.org.bamgang.members.dto.response.GetMemberResponseDto;
-import growthook.org.bamgang.members.dto.response.GetPickedWalkResponseDto;
+import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.repository.*;
 import growthook.org.bamgang.trail.domain.Trail;
@@ -235,6 +232,17 @@ public class MemberService {
     }
 
     // 최근 검색어 조회
-    public
+    public List<GetSearchWordResponseDto> getSearch(int userId){
+        List<SearchWord> searchWords = searchWordRepository.getSearchWordsByUserIdOrderBySearchTimeDesc(userId);
+        List<GetSearchWordResponseDto> searchList = new ArrayList<>();
+        for(SearchWord searchWord : searchWords){
+            GetSearchWordResponseDto dto = GetSearchWordResponseDto.builder()
+                    .word(searchWord.getWord())
+                    .id(searchWord.getId())
+                    .build();
+            searchList.add(dto);
+        }
+        return searchList;
+    }
 
 }
