@@ -183,6 +183,83 @@ public class MemberController {
         }
     }
 
+    //kakao로그인
+    @GetMapping("/kakao/login/test")
+    public ResponseEntity<?> kakaoLoginTest()throws URISyntaxException {
+        String redirectUri = "https://ddubam.site/api/members/kakao/oauth/test"; //배포
+//        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; //테스트
+        String kakaoAuthUri = "https://kauth.kakao.com/oauth/authorize?client_id=" + apiKey + "&redirect_uri=" + redirectUri + "&response_type=code";
+        // 리다이렉트
+        HttpHeaders httpHeaders = new HttpHeaders();
+        URI redirectUriWithParams = new URI(kakaoAuthUri);
+        httpHeaders.setLocation(redirectUriWithParams);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+    }
+
+    @GetMapping("/kakao/oauth/test")
+    public ResponseEntity<?> kakaoTest(@RequestParam("code") String code) throws URISyntaxException {
+        String redirectUri = "https://ddubam.site/api/members/kakao/oauth/test"; // 배포
+//        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; // 테스트
+        String tokenUrl = "https://kauth.kakao.com/oauth/token";
+        String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
+
+        // 요청으로 엑세스 토큰 꺼내기
+        HttpHeaders tokenHeaders = new HttpHeaders();
+        tokenHeaders.add("Content-Type", "application/x-www-form-urlencoded");
+
+        MultiValueMap<String, String> tokenBody = new LinkedMultiValueMap<>();
+        tokenBody.add("grant_type", "authorization_code");
+        tokenBody.add("client_id", apiKey);
+        tokenBody.add("redirect_uri", redirectUri);
+        tokenBody.add("code", code);
+
+        HttpEntity<MultiValueMap<String, String>> tokenRequestEntity = new HttpEntity<>(tokenBody, tokenHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, tokenRequestEntity, String.class);
+        try {
+            // 엑세스 토큰 꺼내기
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode tokenJsonNode = objectMapper.readTree(tokenResponse.getBody());
+            String accessToken = tokenJsonNode.get("access_token").asText();
+
+            // 엑세스 토큰으로 검색
+            HttpHeaders userInfoHeaders = new HttpHeaders();
+            userInfoHeaders.add("Authorization", "Bearer " + accessToken);
+            userInfoHeaders.add("Content-Type", "application/x-www-form-urlencoded");
+
+            MultiValueMap<String, String> userInfoBody = new LinkedMultiValueMap<>();
+            userInfoBody.add("property_keys", "[\"kakao_account.profile\"]");
+
+            HttpEntity<MultiValueMap<String, String>> userInfoRequestEntity = new HttpEntity<>(userInfoBody, userInfoHeaders);
+
+            ResponseEntity<String> userInfoResponse = restTemplate.exchange(userInfoUrl, HttpMethod.POST, userInfoRequestEntity, String.class);
+
+            // 결과값 꺼내오기
+            JsonNode userInfoJsonNode = objectMapper.readTree(userInfoResponse.getBody());
+            String  id = userInfoJsonNode.get("id").asText();
+            String nickname = userInfoJsonNode.get("kakao_account").get("profile").get("nickname").asText();
+            String profile = userInfoJsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
+
+            MemberToken memberToken = memberService.createMember(id,profile,nickname);
+
+            String token = jwtUtil.generateToken(memberToken);
+
+            // 로그인
+//            String redirectUrl = "https://ddubam.site/loading?token="+token; // 배포
+            String redirectUrl =  "http://localhost:3000/loading?token=" + token; //테스트
+            URI redirectUriWithParams = new URI(redirectUrl);
+//            System.out.println(token);
+            // 리다이렉트
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(redirectUriWithParams);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("로그인 실패");
+        }
+    }
+
     //logout
     @GetMapping("/kakao/logout")
     public ResponseEntity<?> logout()
