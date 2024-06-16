@@ -482,29 +482,49 @@ public class TrailServiceImpl implements TrailService {
     private List<Safety> findNearbyFacilities(Double[] latitudeList, Double[] longitudeList, double radiusMeters) {
         List<Safety> nearbyFacilities = new ArrayList<>();
 
+        if (latitudeList == null || latitudeList.length == 0 || longitudeList == null || longitudeList.length == 0) {
+            return nearbyFacilities;
+        }
+
+        // 위도와 경도의 최소, 최대 값을 계산합니다.
+        double minLat = Double.MAX_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLon = Double.MIN_VALUE;
+
+        for (int i = 0; i < latitudeList.length; i++) {
+            double lat = latitudeList[i];
+            double lon = longitudeList[i];
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
+            if (lon < minLon) minLon = lon;
+            if (lon > maxLon) maxLon = lon;
+        }
+
+        minLat -= 0.001;
+        maxLat += 0.001;
+        minLon -= 0.001;
+        maxLon += 0.001;
+
         List<Safety> allFacilities = safetyRepository.findAll(); // DB에서 모든 시설물 조회
 
-        A: for (Safety facility : allFacilities) {
+        // 미리 범위 필터링을 합니다.
+        for (Safety facility : allFacilities) {
             String facilityLatStr = facility.getLatitude();
             String facilityLonStr = facility.getLongitude();
-            for (int i = 0; i < latitudeList.length; i++) {
-                Double lat = latitudeList[i];
-                Double lon = longitudeList[i];
+            if (facilityLatStr != null && facilityLonStr != null) {
+                double facilityLat = Double.parseDouble(facilityLatStr);
+                double facilityLon = Double.parseDouble(facilityLonStr);
 
-                if (facilityLatStr != null && facilityLonStr != null) {
-                    Double facilityLat = Double.parseDouble(facilityLatStr);
-                    Double facilityLon = Double.parseDouble(facilityLonStr);
-
-                    if (distance(lat, lon, facilityLat, facilityLon) <= radiusMeters) {
-                        nearbyFacilities.add(facility);
-                        continue A;
-                    }
+                if (facilityLat >= minLat && facilityLat <= maxLat && facilityLon >= minLon && facilityLon <= maxLon) {
+                    nearbyFacilities.add(facility);
                 }
             }
         }
 
         return nearbyFacilities;
     }
+
 
     //거릭 계산 함수
     private double distance(double lat1, double lon1, double lat2, double lon2) {
