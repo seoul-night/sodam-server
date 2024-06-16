@@ -13,8 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -225,10 +229,20 @@ public class MemberService {
     @Transactional
     // 최근 검색어 저장
     public void saveSearch(int userId, String word){
-        SearchWord searchWord = new SearchWord();
-        searchWord.setWord(word);
-        searchWord.setUserId(userId);
-        searchWordRepository.save(searchWord);
+        Optional<SearchWord> existingSearchWord = searchWordRepository.findByUserIdAndWord(userId, word);
+
+        if (existingSearchWord.isPresent()) {
+            // 이미 존재하는 검색어일 경우, 검색 시간을 업데이트
+            SearchWord searchWord = existingSearchWord.get();
+            searchWord.setSearchTime(LocalDateTime.now());
+            searchWordRepository.save(searchWord);
+        } else {
+            // 새로운 검색어일 경우, 새로 생성
+            SearchWord searchWord = new SearchWord();
+            searchWord.setWord(word);
+            searchWord.setUserId(userId);
+            searchWordRepository.save(searchWord);
+        }
     }
 
     // 최근 검색어 조회
