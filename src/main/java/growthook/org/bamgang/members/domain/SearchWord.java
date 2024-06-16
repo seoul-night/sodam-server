@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,5 +25,5 @@ public class SearchWord {
     private Integer userId;
 
     @Column(insertable = false, name = "search_time")
-    private Time searchTime;
+    private LocalDateTime searchTime;
 }
