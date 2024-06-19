@@ -153,7 +153,8 @@ public class MemberService {
         int userId = finishedDestinationRequest.getUserId();
         finishedDestination.setUserId(userId);
         finishedDestination.setReview(finishedDestinationRequest.getReview());
-        finishedDestination.setDestinationId(finishedDestinationRequest.getDestinationId());
+        finishedDestination.setDestinaionLatitude(finishedDestinationRequest.getDestinaionLatitude());
+        finishedDestination.setDestinaionLongitude(finishedDestinationRequest.getDestinaionLongitude());
         finishedDestination.setDestinationTitle(finishedDestinationRequest.getDestinationTitle());
         dataFinishedDestintationRepository.save(finishedDestination);
 
@@ -168,7 +169,8 @@ public class MemberService {
         List<GetFinishedDestinationResponseDto> finishedDto = new ArrayList<>();
         for(FinishedDestination finished : finisheds){
             GetFinishedDestinationResponseDto finishedDestinationResponseDto = GetFinishedDestinationResponseDto.builder()
-                    .destinationId(finished.getDestinationId())
+                    .destinaionLatitude(finished.getDestinaionLatitude())
+                    .destinaionLongitude(finished.getDestinaionLatitude())
                     .finishedDate(finished.getFinishedDate())
                     .destinationTitle(finished.getDestinationTitle())
                     .review(finished.getReview())

@@ -16,8 +16,11 @@ public class FinishedDestination {
     @Column(name = "finished_id")
     private Integer finishedId;
 
-    @Column(name = "destination_id")
-    private Integer destinationId;
+    @Column(name = "destinaion_latitude")
+    private Double destinaionLatitude;
+
+    @Column(name = "destinaion_longitude")
+    private Double destinaionLongitude;
 
     @Column(name = "destinaion_title")
     private String destinationTitle;
