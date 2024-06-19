@@ -153,7 +153,8 @@ public class MemberService {
         int userId = finishedDestinationRequest.getUserId();
         finishedDestination.setUserId(userId);
         finishedDestination.setReview(finishedDestinationRequest.getReview());
-        finishedDestination.setDestinationId(finishedDestinationRequest.getDestinationId());
+        finishedDestination.setDestinaionLatitude(finishedDestinationRequest.getDestinaionLatitude());
+        finishedDestination.setDestinaionLongitude(finishedDestinationRequest.getDestinaionLongitude());
         finishedDestination.setDestinationTitle(finishedDestinationRequest.getDestinationTitle());
         dataFinishedDestintationRepository.save(finishedDestination);
 
@@ -162,23 +163,7 @@ public class MemberService {
         member.setFinishedCount(member.getFinishedCount() + 1);
     }
 
-    // 완료한 경로 후기 조회
-    public List<GetFinishedDestinationResponseDto> findFinishedSearchById(int id){
-        List<FinishedDestination> finisheds = dataFinishedDestintationRepository.findAllByUserId(id);
-        List<GetFinishedDestinationResponseDto> finishedDto = new ArrayList<>();
-        for(FinishedDestination finished : finisheds){
-            GetFinishedDestinationResponseDto finishedDestinationResponseDto = GetFinishedDestinationResponseDto.builder()
-                    .destinationId(finished.getDestinationId())
-                    .finishedDate(finished.getFinishedDate())
-                    .destinationTitle(finished.getDestinationTitle())
-                    .review(finished.getReview())
-                    .finishedId(finished.getFinishedId())
-                    .build();
-            finishedDto.add(finishedDestinationResponseDto);
-        }
 
-        return finishedDto;
-    }
 
     // 찜한 산책로 조회
     public List<GetPickedWalkResponseDto> findPickedWalkById(int id){

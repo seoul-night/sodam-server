@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class FinishedDestinationRequest {
-    private Integer destinationId;
+    private Double destinaionLatitude;
+    private Double destinaionLongitude;
     private String destinationTitle;
     private Integer userId;
     private String review;

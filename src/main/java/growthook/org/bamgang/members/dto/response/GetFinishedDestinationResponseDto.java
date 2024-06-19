@@ -11,7 +11,9 @@ import java.time.LocalDate;
 public class GetFinishedDestinationResponseDto {
     private Integer finishedId;
 
-    private Integer destinationId;
+    private Double destinaionLatitude;
+
+    private Double destinaionLongitude;
 
     private String destinationTitle;
 
