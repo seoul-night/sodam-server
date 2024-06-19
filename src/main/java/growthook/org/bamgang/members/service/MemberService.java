@@ -170,7 +170,7 @@ public class MemberService {
         for(FinishedDestination finished : finisheds){
             GetFinishedDestinationResponseDto finishedDestinationResponseDto = GetFinishedDestinationResponseDto.builder()
                     .destinaionLatitude(finished.getDestinaionLatitude())
-                    .destinaionLongitude(finished.getDestinaionLatitude())
+                    .destinaionLongitude(finished.getDestinaionLongitude())
                     .finishedDate(finished.getFinishedDate())
                     .destinationTitle(finished.getDestinationTitle())
                     .review(finished.getReview())
