@@ -446,14 +446,17 @@ public class TrailServiceImpl implements TrailService {
             List<Safety> nearbyFacilities = findNearbyFacilities(latitudeList, longitudeList, 100.0);
             List<Double> safetyLatitudeList = new ArrayList<>();
             List<Double> safetyLontiudeList = new ArrayList<>();
+            List<Integer> safetyTypeList = new ArrayList<>();
 
             for(Safety safety : nearbyFacilities){
                 safetyLatitudeList.add(Double.parseDouble(safety.getLatitude()));
                 safetyLontiudeList.add(Double.parseDouble(safety.getLongitude()));
+                safetyTypeList.add(Integer.parseInt(safety.getType()));
             }
 
             Double[] safetyLatitude = safetyLatitudeList.toArray(new Double[0]);
             Double[] safetyLontitude = safetyLontiudeList.toArray(new Double[0]);
+            Integer[] safetyType = safetyTypeList.toArray(new Integer[0]);
 
             return GetPopularTrailResponseDto.builder()
                     .detail(trail.getDetail())
@@ -472,6 +475,7 @@ public class TrailServiceImpl implements TrailService {
                     .region(trail.getRegion())
                     .safetyLatitudeList(safetyLatitude)
                     .safetyLongitudeList(safetyLontitude)
+                    .safetyTypeList(safetyType)
                     .build();
         }catch (Exception e){
             return null;
