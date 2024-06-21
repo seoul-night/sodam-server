@@ -23,5 +23,6 @@ public class GetPopularTrailResponseDto {
     private Double[] safetyLongitudeList;
     private Double[] latitudeList;
     private Double[] longitudeList;
+    private Integer[] safetyTypeList;
     private boolean picked;
 }
