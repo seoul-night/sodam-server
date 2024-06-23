@@ -483,6 +483,19 @@ public class TrailServiceImpl implements TrailService {
     }
 
     // 안전 시설물 검색 함수
+    /*
+    문제
+    1. 10만개의 시설물 존재(좌표값 주어짐)
+    2. 이동 경로의 좌표들의 갯수 1000개
+    3. 이동 경로 주변에 있는 시설물의 좌표들 구하기
+
+    풀이
+    1. 이동 경로 좌표를 통해서 시설물 필터링 => 1000 + 10만
+    2. for문 돌리기 => 필터링된 시설물
+        2.1. for문 돌리기
+            2.1.1. 30m이내 좌표가 있는지 확인 => 있는 경우 탈출
+    3. 해당 리스트 리턴
+     */
     private List<Safety> findNearbyFacilities(Double[] latitudeList, Double[] longitudeList, double radiusMeters) {
         List<Safety> nearbyFacilities = new ArrayList<>();
 
@@ -526,7 +539,19 @@ public class TrailServiceImpl implements TrailService {
             }
         }
 
-        return nearbyFacilities;
+        List<Safety> finalFacilities = new ArrayList<>();
+        // 필터링된 시설물로 중 경로 주변에 있는지 확인
+        for (Safety facility : nearbyFacilities){
+            for (int i = 0; i < latitudeList.length; i++) {
+                double lat = latitudeList[i];
+                double lon = longitudeList[i];
+                if(distance(lat,lon,Double.parseDouble(facility.getLatitude()),Double.parseDouble(facility.getLongitude()))<=radiusMeters){
+                    finalFacilities.add(facility);
+                }
+            }
+        }
+
+        return finalFacilities;
     }
 
 
