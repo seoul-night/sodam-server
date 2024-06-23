@@ -1,9 +1,7 @@
 package growthook.org.bamgang.members.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +13,9 @@ import java.util.Date;
 @Table(name = "pickedtrail")
 public class PickedWalk {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     private Integer trailId;
 
     private Integer userId;
