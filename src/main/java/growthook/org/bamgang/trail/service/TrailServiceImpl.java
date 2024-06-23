@@ -443,7 +443,7 @@ public class TrailServiceImpl implements TrailService {
 
 
             // 시설물 찾기
-            List<Safety> nearbyFacilities = findNearbyFacilities(latitudeList, longitudeList, 100.0);
+            List<Safety> nearbyFacilities = findNearbyFacilities(latitudeList, longitudeList, 30.0);
             List<Double> safetyLatitudeList = new ArrayList<>();
             List<Double> safetyLontiudeList = new ArrayList<>();
             List<Integer> safetyTypeList = new ArrayList<>();
