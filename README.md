@@ -9,7 +9,6 @@ https://ddubam.site
 <img width="703" alt="스크린샷 2024-06-25 오전 3 08 01" src="https://github.com/seoul-night/ddubam-server/assets/72538151/4fb04231-58d7-48b9-b378-0792330abb2e">
 
 # API 명세서
-# API Endpoints
 
 | 이름                                    | URL                                                                 | Method |
 |---------------------------------------|-------------------------------------------------------------------|--------|
