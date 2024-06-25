@@ -547,6 +547,7 @@ public class TrailServiceImpl implements TrailService {
                 double lon = longitudeList[i];
                 if(distance(lat,lon,Double.parseDouble(facility.getLatitude()),Double.parseDouble(facility.getLongitude()))<=radiusMeters){
                     finalFacilities.add(facility);
+                    break;
                 }
             }
         }
