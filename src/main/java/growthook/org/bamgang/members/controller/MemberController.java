@@ -109,7 +109,7 @@ public class MemberController {
     //kakao로그인
     @GetMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin()throws URISyntaxException {
-        String redirectUri = "https://ddubam.site/api/members/kakao/oauth"; //배포
+        String redirectUri = "https://sodamsodam.site/api/members/kakao/oauth"; //배포
 //        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; //테스트
         String kakaoAuthUri = "https://kauth.kakao.com/oauth/authorize?client_id=" + apiKey + "&redirect_uri=" + redirectUri + "&response_type=code";
         // 리다이렉트
@@ -121,7 +121,7 @@ public class MemberController {
 
     @GetMapping("/kakao/oauth")
     public ResponseEntity<?> kakao(@RequestParam("code") String code) throws URISyntaxException {
-        String redirectUri = "https://ddubam.site/api/members/kakao/oauth"; // 배포
+        String redirectUri = "https://sodamsodam.site/api/members/kakao/oauth"; // 배포
 //        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; // 테스트
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
         String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
@@ -152,7 +152,7 @@ public class MemberController {
             userInfoHeaders.add("Content-Type", "application/x-www-form-urlencoded");
 
             MultiValueMap<String, String> userInfoBody = new LinkedMultiValueMap<>();
-            userInfoBody.add("property_keys", "[\"kakao_account.profile\"]");
+            userInfoBody.add("property_keys", "[\"kakao_account.profile\",\"kakao_account.email\"]");
 
             HttpEntity<MultiValueMap<String, String>> userInfoRequestEntity = new HttpEntity<>(userInfoBody, userInfoHeaders);
 
@@ -163,13 +163,14 @@ public class MemberController {
             String  id = userInfoJsonNode.get("id").asText();
             String nickname = userInfoJsonNode.get("kakao_account").get("profile").get("nickname").asText();
             String profile = userInfoJsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
+            String email = userInfoJsonNode.get("kakao_account").get("email").asText();
 
-            MemberToken memberToken = memberService.createMember(id,profile,nickname);
+            MemberToken memberToken = memberService.createMember(id,profile,nickname,email);
 
             String token = jwtUtil.generateToken(memberToken);
 
             // 로그인
-            String redirectUrl = "https://ddubam.site/loading?token="+token; // 배포
+            String redirectUrl = "https://sodamsodam.site/loading?token="+token; // 배포
 //            String redirectUrl =  "http://localhost:3000/loading?token=" + token; //테스트
             URI redirectUriWithParams = new URI(redirectUrl);
 //            System.out.println(token);
@@ -186,7 +187,7 @@ public class MemberController {
     //kakao로그인
     @GetMapping("/kakao/login/test")
     public ResponseEntity<?> kakaoLoginTest()throws URISyntaxException {
-        String redirectUri = "https://ddubam.site/api/members/kakao/oauth/test"; //배포
+        String redirectUri = "https://sodamsodam.site/api/members/kakao/oauth/test"; //배포
 //        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; //테스트
         String kakaoAuthUri = "https://kauth.kakao.com/oauth/authorize?client_id=" + apiKey + "&redirect_uri=" + redirectUri + "&response_type=code";
         // 리다이렉트
@@ -198,7 +199,7 @@ public class MemberController {
 
     @GetMapping("/kakao/oauth/test")
     public ResponseEntity<?> kakaoTest(@RequestParam("code") String code) throws URISyntaxException {
-        String redirectUri = "https://ddubam.site/api/members/kakao/oauth/test"; // 배포
+        String redirectUri = "https://sodamsodam.site/api/members/kakao/oauth/test"; // 배포
 //        String redirectUri = "http://localhost:8080/api/members/kakao/oauth"; // 테스트
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
         String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
@@ -229,7 +230,7 @@ public class MemberController {
             userInfoHeaders.add("Content-Type", "application/x-www-form-urlencoded");
 
             MultiValueMap<String, String> userInfoBody = new LinkedMultiValueMap<>();
-            userInfoBody.add("property_keys", "[\"kakao_account.profile\"]");
+            userInfoBody.add("property_keys", "[\"kakao_account.profile\",\"kakao_account.email\"]");
 
             HttpEntity<MultiValueMap<String, String>> userInfoRequestEntity = new HttpEntity<>(userInfoBody, userInfoHeaders);
 
@@ -240,13 +241,14 @@ public class MemberController {
             String  id = userInfoJsonNode.get("id").asText();
             String nickname = userInfoJsonNode.get("kakao_account").get("profile").get("nickname").asText();
             String profile = userInfoJsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
+            String email = userInfoJsonNode.get("kakao_account").get("email").asText();
 
-            MemberToken memberToken = memberService.createMember(id,profile,nickname);
+            MemberToken memberToken = memberService.createMember(id,profile,nickname,email);
 
             String token = jwtUtil.generateToken(memberToken);
 
             // 로그인
-//            String redirectUrl = "https://ddubam.site/loading?token="+token; // 배포
+//            String redirectUrl = "https://sodamsodam.site/loading?token="+token; // 배포
             String redirectUrl =  "http://localhost:3000/loading?token=" + token; //테스트
             URI redirectUriWithParams = new URI(redirectUrl);
 //            System.out.println(token);
@@ -265,7 +267,7 @@ public class MemberController {
     public ResponseEntity<?> logout()
     {
         try {
-            String redirectUrl = "https://kauth.kakao.com/oauth/logout?client_id="+apiKey+"&logout_redirect_uri=https://ddubam.site";
+            String redirectUrl = "https://kauth.kakao.com/oauth/logout?client_id="+apiKey+"&logout_redirect_uri=https://sodamsodam.site";
             URI redirectUriWithParams = new URI(redirectUrl);
             // 리다이렉트
             HttpHeaders httpHeaders = new HttpHeaders();
