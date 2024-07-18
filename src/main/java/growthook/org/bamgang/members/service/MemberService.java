@@ -53,7 +53,7 @@ public class MemberService {
 
     // Member 추가
     @Transactional
-    public  MemberToken createMember(String passward,String profile,String nickname){
+    public  MemberToken createMember(String passward,String profile,String nickname,String email){
         Member findMember = memberRepository.findByPassword(passward);
         if(findMember!=null){
             MemberToken memberToken = new MemberToken();
@@ -71,6 +71,7 @@ public class MemberService {
             member.setPickedCount(0);
             member.setFinishedCount(0);
             member.setWalkedDay(0);
+            member.setEmail(email);
             memberRepository.save(member);
         }catch (Exception e){
             e.printStackTrace();
