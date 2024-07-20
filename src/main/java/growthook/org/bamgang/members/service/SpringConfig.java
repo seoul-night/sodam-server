@@ -21,18 +21,21 @@ public class SpringConfig {
 
     private final SearchWordRepository searchWordRepository;
 
+    private final RegistLocationsRepository registLocationsRepository;
+
     @Autowired
-    public SpringConfig(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository, SearchWordRepository searchWordRepository) {
+    public SpringConfig(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository, SearchWordRepository searchWordRepository, RegistLocationsRepository registLocationsRepository) {
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
         this.memberRepository = memberRepository;
         this.trailRepository = trailRepository;
         this.dataFinishedDestintationRepository = dataFinishedDestintationRepository;
         this.searchWordRepository = searchWordRepository;
+        this.registLocationsRepository = registLocationsRepository;
     }
 
     @Bean
     public MemberService memberService() {
-        return new MemberService(memberRepository,finishedWalkRepository, dataPickedWalkRepository,trailRepository,dataFinishedDestintationRepository, searchWordRepository);
+        return new MemberService(memberRepository,finishedWalkRepository, dataPickedWalkRepository,trailRepository,dataFinishedDestintationRepository, searchWordRepository, registLocationsRepository);
     }
 }

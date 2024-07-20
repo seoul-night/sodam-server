@@ -2,9 +2,11 @@ package growthook.org.bamgang.members.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import growthook.org.bamgang.members.domain.RegistLocations;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.request.PickedWalkRequest;
+import growthook.org.bamgang.members.dto.request.RegistLocationsRequest;
 import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.jwtUtil.JWTUtil;
@@ -104,6 +106,18 @@ public class MemberController {
     @DeleteMapping("/search/{userId}/{searchId}")
     public void deleteSearchWords(@PathVariable("userId") int userId, @PathVariable("searchId") int searchId){
         memberService.deleteSearch(userId,searchId);
+    }
+
+    // 장소 등록 리스트 조회
+    @GetMapping("/locations/{userId}")
+    public List<GetRegistLocationsResponseDto> getRegistLocations(@PathVariable("userId") int userId){
+        return memberService.getRegistLocations(userId);
+    }
+
+    // 장소 등록
+    @PostMapping("/locations")
+    public void postRegistLocations(@RequestBody RegistLocationsRequest requestBody){
+        RegistLocations registLocations = new RegistLocations();
     }
 
     //kakao로그인
