@@ -120,6 +120,12 @@ public class MemberController {
         memberService.postRegistLocations(requestBody);
     }
 
+    // 등록 장소 삭제
+    @DeleteMapping("/locations/{id}")
+    public void deleteRegistLocations(@PathVariable("id") int id){
+        memberService.deleteRegistLocations(id);
+    }
+
     //kakao로그인
     @GetMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin()throws URISyntaxException {
