@@ -117,7 +117,7 @@ public class MemberController {
     // 장소 등록
     @PostMapping("/locations")
     public void postRegistLocations(@RequestBody RegistLocationsRequest requestBody){
-        RegistLocations registLocations = new RegistLocations();
+        memberService.postRegistLocations(requestBody);
     }
 
     //kakao로그인

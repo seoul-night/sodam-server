@@ -3,6 +3,7 @@ package growthook.org.bamgang.members.service;
 import growthook.org.bamgang.members.domain.*;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
+import growthook.org.bamgang.members.dto.request.RegistLocationsRequest;
 import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.repository.*;
@@ -291,5 +292,21 @@ public class MemberService {
         return dtoList;
     }
 
+    // 장소 등록
+    @Transactional
+    public void postRegistLocations(RegistLocationsRequest requestBody){
+        RegistLocations registLocations = new RegistLocations();
+        registLocations.setAddress(requestBody.getAddress());
+        registLocations.setUserId(requestBody.getUserId());
+        registLocations.setName(requestBody.getName());
+        registLocations.setLongitude(requestBody.getLongitude());
+        registLocations.setLatitude(requestBody.getLatitude());
+        registLocationsRepository.save(registLocations);
+    }
 
+    // 장소 삭제
+    @Transactional
+    public void deleteRegistLocations(int id){
+        registLocationsRepository.deleteById(id);
+    }
 }
