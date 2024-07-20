@@ -1,6 +1,7 @@
 package growthook.org.bamgang.family.service;
 
 import growthook.org.bamgang.family.domain.FamilyLocations;
+import growthook.org.bamgang.family.dto.requestDto.FamilyLocationRequestDto;
 import growthook.org.bamgang.family.dto.responseDto.FamilyLocationResponseDto;
 import growthook.org.bamgang.family.repository.FamilyLocationsRepository;
 import growthook.org.bamgang.members.domain.Member;
@@ -22,7 +23,6 @@ public class FamilyService {
     @Autowired
     MemberRepository memberRepository;
 
-
     public List<FamilyLocationResponseDto> getFamilyLocation(int userId){
         Member user = memberRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
         int familyId = user.getFamilyId();
@@ -33,5 +33,13 @@ public class FamilyService {
             responseList.add(FamilyLocationResponseDto.builder().latitude(loc.getLatitude()).longitude(loc.getLongitude()).build());
         }
         return responseList;
+    }
+
+    public void postFamilyLocations(FamilyLocationRequestDto requestDto){
+        FamilyLocations location = new FamilyLocations();
+        location.setMemberId(requestDto.getUserId());
+        location.setLongitude(requestDto.getLongitude());
+        location.setLatitude(requestDto.getLatitude());
+        familyLocationsRepository.save(location);
     }
 }

@@ -1,13 +1,16 @@
 package growthook.org.bamgang.family.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "family_locations")
 @Getter
+@Setter
 public class FamilyLocations {
     @Id
     @Column(name = "id")
@@ -23,6 +26,6 @@ public class FamilyLocations {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name = "date")
+    @Column(insertable = false,name = "date")
     private LocalDate date;
 }
