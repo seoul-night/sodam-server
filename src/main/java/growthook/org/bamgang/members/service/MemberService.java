@@ -3,6 +3,7 @@ package growthook.org.bamgang.members.service;
 import growthook.org.bamgang.members.domain.*;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
+import growthook.org.bamgang.members.dto.request.RegistLocationsRequest;
 import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.repository.*;
@@ -37,18 +38,21 @@ public class MemberService {
 
     private final SearchWordRepository searchWordRepository;
 
+    private final RegistLocationsRepository registLocationsRepository;
+
 
     @Value("${kakao-key}")
     private String apiKey;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository, SearchWordRepository searchWordRepository) {
+    public MemberService(MemberRepository memberRepository, DataFinishedWalkRepository finishedWalkRepository, DataPickedWalkRepository dataPickedWalkRepository, TrailRepository trailRepository, DataFinishedDestintationRepository dataFinishedDestintationRepository, SearchWordRepository searchWordRepository, RegistLocationsRepository registLocationsRepository) {
         this.memberRepository = memberRepository;
         this.finishedWalkRepository = finishedWalkRepository;
         this.dataPickedWalkRepository = dataPickedWalkRepository;
         this.trailRepository = trailRepository;
         this.dataFinishedDestintationRepository = dataFinishedDestintationRepository;
         this.searchWordRepository = searchWordRepository;
+        this.registLocationsRepository = registLocationsRepository;
     }
 
     // Member 추가
@@ -272,4 +276,37 @@ public class MemberService {
         }
     }
 
+    //등록 장소 조회
+    public List<GetRegistLocationsResponseDto> getRegistLocations(int userId){
+        List<RegistLocations> locations =registLocationsRepository.findByUserIdOrderByIdDesc(userId);
+        List<GetRegistLocationsResponseDto> dtoList = new ArrayList<>();
+        for(RegistLocations loc : locations){
+            dtoList.add(GetRegistLocationsResponseDto.builder()
+                            .address(loc.getAddress())
+                            .name(loc.getName())
+                            .latitude(loc.getLatitude())
+                            .longitude(loc.getLongitude())
+                            .id(loc.getId())
+                            .build());
+        }
+        return dtoList;
+    }
+
+    // 장소 등록
+    @Transactional
+    public void postRegistLocations(RegistLocationsRequest requestBody){
+        RegistLocations registLocations = new RegistLocations();
+        registLocations.setAddress(requestBody.getAddress());
+        registLocations.setUserId(requestBody.getUserId());
+        registLocations.setName(requestBody.getName());
+        registLocations.setLongitude(requestBody.getLongitude());
+        registLocations.setLatitude(requestBody.getLatitude());
+        registLocationsRepository.save(registLocations);
+    }
+
+    // 장소 삭제
+    @Transactional
+    public void deleteRegistLocations(int id){
+        registLocationsRepository.deleteById(id);
+    }
 }
