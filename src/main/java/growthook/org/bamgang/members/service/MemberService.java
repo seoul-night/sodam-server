@@ -295,6 +295,9 @@ public class MemberService {
     // 장소 등록
     @Transactional
     public void postRegistLocations(RegistLocationsRequest requestBody){
+        Member member = memberRepository.findById(requestBody.getUserId()).orElseThrow(()->new RuntimeException());
+        member.setPickedCount(member.getPickedCount() + 1);
+
         RegistLocations registLocations = new RegistLocations();
         registLocations.setAddress(requestBody.getAddress());
         registLocations.setUserId(requestBody.getUserId());
@@ -307,6 +310,10 @@ public class MemberService {
     // 장소 삭제
     @Transactional
     public void deleteRegistLocations(int id){
+        RegistLocations deleteLocation = registLocationsRepository.findById(id).orElseThrow(()->new RuntimeException());
+        Member member = memberRepository.findById(deleteLocation.getUserId()).orElseThrow(()->new RuntimeException());
+        member.setPickedCount(member.getPickedCount() - 1);
+
         registLocationsRepository.deleteById(id);
     }
 }
