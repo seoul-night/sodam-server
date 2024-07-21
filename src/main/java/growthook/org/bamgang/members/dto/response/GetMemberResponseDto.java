@@ -17,4 +17,8 @@ public class GetMemberResponseDto {
     private Integer pickedCount;
 
     private String profile;
+
+    private Integer familyId;
+
+    private String email;
 }
