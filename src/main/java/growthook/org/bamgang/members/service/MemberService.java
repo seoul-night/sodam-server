@@ -1,11 +1,13 @@
 package growthook.org.bamgang.members.service;
 
 import growthook.org.bamgang.members.domain.*;
+import growthook.org.bamgang.members.dto.request.AddFriendRequest;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
 import growthook.org.bamgang.members.dto.request.RegistLocationsRequest;
 import growthook.org.bamgang.members.dto.response.*;
 import growthook.org.bamgang.members.dto.token.MemberToken;
+import growthook.org.bamgang.members.exception.MemberNotFoundException;
 import growthook.org.bamgang.members.repository.*;
 import growthook.org.bamgang.trail.domain.Trail;
 import growthook.org.bamgang.trail.repository.TrailRepository;
@@ -26,7 +28,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class MemberService {
 
-    private MemberRepository memberRepository;
+    private static MemberRepository memberRepository;
 
     private DataFinishedWalkRepository finishedWalkRepository;
 
@@ -54,6 +56,7 @@ public class MemberService {
         this.searchWordRepository = searchWordRepository;
         this.registLocationsRepository = registLocationsRepository;
     }
+
 
     // Member 추가
     @Transactional
@@ -99,6 +102,8 @@ public class MemberService {
                 .pickedCount(member.getPickedCount())
                 .walkedDay(member.getWalkedDay())
                 .profile(member.getProfile())
+                .familyId(member.getFamilyId())
+                .email(member.getEmail())
                 .build();
         return getMemberResponseDto;
     }
@@ -111,6 +116,81 @@ public class MemberService {
         } else {
             throw new IllegalArgumentException("ID가 " + id + "인 멤버가 존재하지 않습니다");
         }
+    }
+
+    // Email로 친구 찾기
+    @Transactional(readOnly = true)
+    public GetMemberResponseDto findByEmail(String targetUserEmail) {
+        Member member = memberRepository.findByEmail(targetUserEmail)
+                .orElseThrow(() -> new MemberNotFoundException("이메일이 " + targetUserEmail + " 인 유저를 찾지 못했습니다."));
+        return GetMemberResponseDto.builder()
+                .nickName(member.getNickName())
+                .exp(member.getExp())
+                .finishedCount(member.getFinishedCount())
+                .pickedCount(member.getPickedCount())
+                .walkedDay(member.getWalkedDay())
+                .profile(member.getProfile())
+                .familyId(member.getFamilyId())
+                .email(member.getEmail())
+                .build();
+    }
+
+    // 친구 Id로 친구 추가
+    @Transactional
+    public GetMemberResponseDto addFriendById(int userId, AddFriendRequest friendRequest) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
+        Member friend = memberRepository.findById(friendRequest.getFriendId())
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + friendRequest.getFriendId() + " 인 친구가 없습니다."));
+
+        member.setFamilyId(friend.getUserId());
+        memberRepository.save(member);
+
+        return GetMemberResponseDto.builder()
+                .nickName(member.getNickName())
+                .exp(member.getExp())
+                .finishedCount(member.getFinishedCount())
+                .pickedCount(member.getPickedCount())
+                .walkedDay(member.getWalkedDay())
+                .profile(member.getProfile())
+                .familyId(member.getFamilyId())
+                .email(member.getEmail())
+                .build();
+    }
+
+    // 친구 정보 가져오기
+    @Transactional(readOnly = true)
+    public GetMemberResponseDto getFriendInfo(int userId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
+
+        if (member.getFamilyId() == null) {
+            throw new MemberNotFoundException("검색된 사용자가 없습니다.");
+        }
+
+        Member friend = memberRepository.findById(member.getFamilyId())
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + member.getFamilyId() + " 인 유저가 없습니다."));
+
+        return GetMemberResponseDto.builder()
+                .nickName(friend.getNickName())
+                .exp(friend.getExp())
+                .finishedCount(friend.getFinishedCount())
+                .pickedCount(friend.getPickedCount())
+                .walkedDay(friend.getWalkedDay())
+                .profile(friend.getProfile())
+                .familyId(friend.getFamilyId())
+                .email(friend.getEmail())
+                .build();
+    }
+
+    // 친구 관계 삭제
+    @Transactional
+    public void removeFriend(int userId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
+
+        member.setFamilyId(null);
+        memberRepository.save(member);
     }
 
     // 완료한 산책로 조회
@@ -275,7 +355,7 @@ public class MemberService {
             searchWordRepository.deleteById(id);
         }
     }
-
+  
     //등록 장소 조회
     public List<GetRegistLocationsResponseDto> getRegistLocations(int userId){
         List<RegistLocations> locations =registLocationsRepository.findByUserIdOrderByIdDesc(userId);
@@ -309,4 +389,5 @@ public class MemberService {
     public void deleteRegistLocations(int id){
         registLocationsRepository.deleteById(id);
     }
+
 }

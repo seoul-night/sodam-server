@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import growthook.org.bamgang.members.domain.RegistLocations;
 import growthook.org.bamgang.members.dto.request.FinishedDestinationRequest;
 import growthook.org.bamgang.members.dto.request.FinishedWalkRequest;
+import growthook.org.bamgang.members.dto.request.AddFriendRequest;
 import growthook.org.bamgang.members.dto.request.PickedWalkRequest;
 import growthook.org.bamgang.members.dto.request.RegistLocationsRequest;
 import growthook.org.bamgang.members.dto.response.*;
@@ -12,7 +13,6 @@ import growthook.org.bamgang.members.dto.token.MemberToken;
 import growthook.org.bamgang.members.jwtUtil.JWTUtil;
 import growthook.org.bamgang.members.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,7 +36,7 @@ public class MemberController {
     @Value("${kakao-key}")
     private String apiKey;
 
-
+    // 멤버 정보 조회
     @GetMapping("/{id}")
     public GetMemberResponseDto getUserInfo(@PathVariable("id") int id){
         GetMemberResponseDto getMemberResponseDto = memberService.findById(id);
@@ -299,5 +299,33 @@ public class MemberController {
             return ResponseEntity.status(500).body("로그아웃 실패");
         }
     }
+
+    // 친구 검색
+    @GetMapping("/friend/search/{targetUserEmail}")
+    public GetMemberResponseDto searchFriends(@PathVariable("targetUserEmail") String targetUserEmail){
+        GetMemberResponseDto getMemberResponseDto = memberService.findByEmail(targetUserEmail);
+        return getMemberResponseDto;
+    }
+
+    // 친구 추가
+    @PutMapping("/friend/{userId}")
+    public GetMemberResponseDto updateFriends(@PathVariable("userId") int userId, @RequestBody AddFriendRequest friendRequest){
+        GetMemberResponseDto getMemberResponseDto = memberService.addFriendById(userId, friendRequest);
+        return getMemberResponseDto;
+    }
+
+    // 친구 정보 가져오기
+    @GetMapping("/friend/{userId}")
+    public GetMemberResponseDto getFriendInfo(@PathVariable("userId") int userId) {
+        GetMemberResponseDto friendInfo = memberService.getFriendInfo(userId);
+        return friendInfo;
+    }
+
+    // 친구 관계 삭제
+    @DeleteMapping("/friend/{userId}")
+    public void deleteFriend(@PathVariable("userId") int userId) {
+        memberService.removeFriend(userId);
+    }
+
 }
 
