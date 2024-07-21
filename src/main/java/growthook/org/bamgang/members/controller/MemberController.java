@@ -34,7 +34,7 @@ public class MemberController {
     @Value("${kakao-key}")
     private String apiKey;
 
-
+    // 멤버 정보 조회
     @GetMapping("/{id}")
     public GetMemberResponseDto getUserInfo(@PathVariable("id") int id){
         GetMemberResponseDto getMemberResponseDto = memberService.findById(id);
@@ -279,5 +279,13 @@ public class MemberController {
             return ResponseEntity.status(500).body("로그아웃 실패");
         }
     }
+
+    // 친구 검색
+    @GetMapping("/friend/{targetUserEmail}")
+    public GetMemberResponseDto searchFriends(@PathVariable("targetUserEmail") String targetUserEmail){
+        GetMemberResponseDto getMemberResponseDto = MemberService.findByEmail(targetUserEmail);
+        return getMemberResponseDto;
+    }
+
 }
 
