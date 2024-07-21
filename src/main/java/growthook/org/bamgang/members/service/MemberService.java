@@ -25,7 +25,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class MemberService {
 
-    private MemberRepository memberRepository;
+    private static MemberRepository memberRepository;
 
     private DataFinishedWalkRepository finishedWalkRepository;
 
@@ -50,6 +50,8 @@ public class MemberService {
         this.dataFinishedDestintationRepository = dataFinishedDestintationRepository;
         this.searchWordRepository = searchWordRepository;
     }
+
+
 
     // Member 추가
     @Transactional
@@ -95,6 +97,8 @@ public class MemberService {
                 .pickedCount(member.getPickedCount())
                 .walkedDay(member.getWalkedDay())
                 .profile(member.getProfile())
+                .familyId(member.getFamilyId())
+                .email(member.getEmail())
                 .build();
         return getMemberResponseDto;
     }
@@ -107,6 +111,22 @@ public class MemberService {
         } else {
             throw new IllegalArgumentException("ID가 " + id + "인 멤버가 존재하지 않습니다");
         }
+    }
+
+    // Email로 친구 찾기
+    public static GetMemberResponseDto findByEmail(String targetUserEmail) {
+        Member member = memberRepository.findByEmail(targetUserEmail).orElseThrow(()-> new RuntimeException());
+        GetMemberResponseDto getMemberResponseDto = GetMemberResponseDto.builder()
+                .nickName(member.getNickName())
+                .exp(member.getExp())
+                .finishedCount(member.getFinishedCount())
+                .pickedCount(member.getPickedCount())
+                .walkedDay(member.getWalkedDay())
+                .profile(member.getProfile())
+                .familyId(member.getFamilyId())
+                .email(member.getEmail())
+                .build();
+        return getMemberResponseDto;
     }
 
     // 완료한 산책로 조회
