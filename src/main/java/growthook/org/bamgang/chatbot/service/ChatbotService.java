@@ -9,10 +9,7 @@ import growthook.org.bamgang.chatbot.entity.Chatbot;
 import growthook.org.bamgang.chatbot.repository.ChatbotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -159,6 +156,34 @@ public class ChatbotService {
         }
     }
 
+    public byte[] textToSpeach(String message) {
+        String url = "https://api.openai.com/v1/audio/speech";
+
+        // HTTP 요청을 위한 RestTemplate 인스턴스 생성
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + gptKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 요청 바디 설정
+        String requestBody = "{"
+                + "\"model\": \"tts-1\","
+                + "\"input\": \""+message+"\","
+                + "\"voice\": \"echo\""
+                + "}";
+
+        // HTTP 엔티티 생성
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        // API 호출
+        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, byte[].class);
+
+        // 받아온 MP3 데이터를 바이트 배열로 변환
+        return response.getBody();
+    }
+
     public MessageResponse getMessage(MessageRequest messageRequest) throws Exception{
         int memberId = messageRequest.getMemberId();
         String threadId = getThreadId(memberId);
@@ -166,7 +191,6 @@ public class ChatbotService {
         runMessages(threadId,assistentId);
         Thread.sleep(1500);
         List<String> messages = getMessageTextValues(threadId);
-        System.out.println(messages);
         MessageResponse response = MessageResponse.builder()
                 .chat(messages.get(0))
                 .build();
