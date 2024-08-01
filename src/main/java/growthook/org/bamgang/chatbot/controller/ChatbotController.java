@@ -34,21 +34,26 @@ public class ChatbotController {
 
     @PostMapping("/speach")
     public ResponseEntity<?> textToSpeach(@RequestBody TextRequest request) {
-        byte[] speach = chatbotService.textToSpeach(request.getText());
+        try {
+            byte[] speach = chatbotService.textToSpeach(request.getText());
 
-        // InputStreamResource 생성
-        InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(speach));
+            // InputStreamResource 생성
+            InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(speach));
 
-        // 응답 헤더 설정
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        responseHeaders.setContentDispositionFormData("attachment", "speech.mp3");
+            // 응답 헤더 설정
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            responseHeaders.setContentDispositionFormData("attachment", "speech.mp3");
 
-        // ResponseEntity 반환
-        return ResponseEntity.ok()
-                .headers(responseHeaders)
-                .contentLength(speach.length)
-                .body(resource);
+            // ResponseEntity 반환
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+                    .contentLength(speach.length)
+                    .body(resource);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @PostMapping("/sessions")

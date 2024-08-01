@@ -1,9 +1,11 @@
 package growthook.org.bamgang.chatbot.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import growthook.org.bamgang.chatbot.dto.request.MessageRequest;
 import growthook.org.bamgang.chatbot.dto.request.SessionRequest;
+import growthook.org.bamgang.chatbot.dto.request.TTSRequest;
 import growthook.org.bamgang.chatbot.dto.response.MessageResponse;
 import growthook.org.bamgang.chatbot.entity.Chatbot;
 import growthook.org.bamgang.chatbot.repository.ChatbotRepository;
@@ -156,7 +158,7 @@ public class ChatbotService {
         }
     }
 
-    public byte[] textToSpeach(String message) {
+    public byte[] textToSpeach(String message) throws JsonProcessingException {
         String url = "https://api.openai.com/v1/audio/speech";
 
         // HTTP 요청을 위한 RestTemplate 인스턴스 생성
@@ -168,11 +170,8 @@ public class ChatbotService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // 요청 바디 설정
-        String requestBody = "{"
-                + "\"model\": \"tts-1\","
-                + "\"input\": \""+message+"\","
-                + "\"voice\": \"echo\""
-                + "}";
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(new TTSRequest("tts-1", message, "echo"));
 
         // HTTP 엔티티 생성
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
