@@ -144,6 +144,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException("아이디가 " + friendRequest.getFriendId() + " 인 친구가 없습니다."));
 
         member.setFamilyId(friend.getUserId());
+        member.setFinishedCount(member.getFinishedCount()+1);
         memberRepository.save(member);
 
         return GetMemberResponseDto.builder()
@@ -190,6 +191,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
 
         member.setFamilyId(null);
+        member.setFinishedCount(member.getFinishedCount()-1);
         memberRepository.save(member);
     }
 
