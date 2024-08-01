@@ -94,6 +94,7 @@ public class MemberService {
     public GetMemberResponseDto findById(int id) {
         Member member = memberRepository.findByUserId(id).orElseThrow(()-> new RuntimeException());
         GetMemberResponseDto getMemberResponseDto = GetMemberResponseDto.builder()
+                .userId(member.getUserId())
                 .nickName(member.getNickName())
                 .exp(member.getExp())
                 .finishedCount(member.getFinishedCount())
@@ -383,6 +384,7 @@ public class MemberService {
 
     private GetMemberResponseDto convertToDto(Member member) {
         return GetMemberResponseDto.builder()
+                .userId(member.getUserId())
                 .nickName(member.getNickName())
                 .exp(member.getExp())
                 .finishedCount(member.getFinishedCount())

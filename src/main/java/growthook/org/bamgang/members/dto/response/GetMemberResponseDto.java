@@ -6,6 +6,8 @@ import lombok.Getter;
 @Builder
 @Getter
 public class GetMemberResponseDto {
+    private Integer userId;
+
     private String nickName;
 
     private Integer exp;
