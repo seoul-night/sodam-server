@@ -26,7 +26,7 @@ public class ChatbotService {
     @Value("${gpt-key}")
     private String gptKey;
     // assistent ID
-    private String assistentId = "asst_QSo0OiudWg3t8pPv1XJuP9hb";
+    private String assistentId = "asst_u8Tr2lkfB2A2tV6fyx94z62h";
 
     private String createThreadId() {
         String URL = "https://api.openai.com/v1/threads";
