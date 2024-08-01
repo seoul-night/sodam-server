@@ -308,7 +308,7 @@ public class MemberController {
     }
 
     // 친구 추가
-    @PutMapping("/friend/{userId}")
+    @PostMapping("/friend/{userId}")
     public GetMemberResponseDto updateFriends(@PathVariable("userId") int userId, @RequestBody AddFriendRequest friendRequest){
         GetMemberResponseDto getMemberResponseDto = memberService.addFriendById(userId, friendRequest);
         return getMemberResponseDto;
@@ -316,15 +316,15 @@ public class MemberController {
 
     // 친구 정보 가져오기
     @GetMapping("/friend/{userId}")
-    public GetMemberResponseDto getFriendInfo(@PathVariable("userId") int userId) {
-        GetMemberResponseDto friendInfo = memberService.getFriendInfo(userId);
+    public List<GetMemberResponseDto> getFriendInfo(@PathVariable("userId") int userId) {
+        List<GetMemberResponseDto> friendInfo = memberService.getFriendsInfo(userId);
         return friendInfo;
     }
 
     // 친구 관계 삭제
-    @DeleteMapping("/friend/{userId}")
-    public void deleteFriend(@PathVariable("userId") int userId) {
-        memberService.removeFriend(userId);
+    @DeleteMapping("/friend/{userId}/{friendId}")
+    public void deleteFriend(@PathVariable("userId") int userId, @PathVariable("friendId") int friendId) {
+        memberService.removeFriend(userId, friendId);
     }
 
 }

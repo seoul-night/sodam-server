@@ -18,7 +18,7 @@ public class GetMemberResponseDto {
 
     private String profile;
 
-    private Integer familyId;
-
     private String email;
+
+    private Integer[] friendList;
 }

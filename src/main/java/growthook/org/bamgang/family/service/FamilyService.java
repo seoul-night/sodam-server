@@ -23,9 +23,10 @@ public class FamilyService {
     @Autowired
     MemberRepository memberRepository;
 
+    // 가족 위치 찾기
     public List<FamilyLocationResponseDto> getFamilyLocation(int userId){
         Member user = memberRepository.findByUserId(userId).orElseThrow(()-> new RuntimeException());
-        int familyId = user.getFamilyId();
+        int familyId = user.getFriendList()[0];
         List<FamilyLocations> locationsList = familyLocationsRepository.findFamilyLocationsByMemberId(familyId);
         List<FamilyLocationResponseDto> responseList = new ArrayList<>();
         for(FamilyLocations loc : locationsList){
@@ -35,6 +36,7 @@ public class FamilyService {
         return responseList;
     }
 
+    // 위치 저장하기
     public void postFamilyLocations(FamilyLocationRequestDto requestDto){
         FamilyLocations location = new FamilyLocations();
         location.setMemberId(requestDto.getUserId());
