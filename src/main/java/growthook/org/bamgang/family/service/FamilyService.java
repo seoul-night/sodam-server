@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FamilyService {
@@ -29,6 +27,7 @@ public class FamilyService {
         int familyId = user.getFriendList()[0];
         List<FamilyLocations> locationsList = familyLocationsRepository.findFamilyLocationsByMemberId(familyId);
         List<FamilyLocationResponseDto> responseList = new ArrayList<>();
+        Collections.sort(locationsList,(o1,o2)->o2.getId()-o1.getId());
         for(FamilyLocations loc : locationsList){
             if(!loc.getDate().equals(LocalDate.now())) continue;
             responseList.add(FamilyLocationResponseDto.builder().latitude(loc.getLatitude()).longitude(loc.getLongitude()).build());
