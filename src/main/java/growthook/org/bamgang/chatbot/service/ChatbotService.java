@@ -189,8 +189,15 @@ public class ChatbotService {
         String threadId = getThreadId(memberId);
         sendMessage(threadId,messageRequest.getChat());
         runMessages(threadId,assistentId);
-        Thread.sleep(3000);
         List<String> messages = getMessageTextValues(threadId);
+        while(true) {
+            if(messages.get(0).equals(messageRequest.getChat())){
+                Thread.sleep(500);
+                messages = getMessageTextValues(threadId);
+                continue;
+            }
+            break;
+        }
         MessageResponse response = MessageResponse.builder()
                 .chat(messages.get(0))
                 .build();
