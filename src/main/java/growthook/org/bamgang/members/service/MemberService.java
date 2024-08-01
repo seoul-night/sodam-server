@@ -16,10 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +55,6 @@ public class MemberService {
         this.searchWordRepository = searchWordRepository;
         this.registLocationsRepository = registLocationsRepository;
     }
-
 
     // Member 추가
     @Transactional
@@ -102,7 +100,7 @@ public class MemberService {
                 .pickedCount(member.getPickedCount())
                 .walkedDay(member.getWalkedDay())
                 .profile(member.getProfile())
-                .familyId(member.getFamilyId())
+                .friendList(member.getFriendList())
                 .email(member.getEmail())
                 .build();
         return getMemberResponseDto;
@@ -116,83 +114,6 @@ public class MemberService {
         } else {
             throw new IllegalArgumentException("ID가 " + id + "인 멤버가 존재하지 않습니다");
         }
-    }
-
-    // Email로 친구 찾기
-    @Transactional(readOnly = true)
-    public GetMemberResponseDto findByEmail(String targetUserEmail) {
-        Member member = memberRepository.findByEmail(targetUserEmail)
-                .orElseThrow(() -> new MemberNotFoundException("이메일이 " + targetUserEmail + " 인 유저를 찾지 못했습니다."));
-        return GetMemberResponseDto.builder()
-                .nickName(member.getNickName())
-                .exp(member.getExp())
-                .finishedCount(member.getFinishedCount())
-                .pickedCount(member.getPickedCount())
-                .walkedDay(member.getWalkedDay())
-                .profile(member.getProfile())
-                .familyId(member.getFamilyId())
-                .email(member.getEmail())
-                .build();
-    }
-
-    // 친구 Id로 친구 추가
-    @Transactional
-    public GetMemberResponseDto addFriendById(int userId, AddFriendRequest friendRequest) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
-        Member friend = memberRepository.findById(friendRequest.getFriendId())
-                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + friendRequest.getFriendId() + " 인 친구가 없습니다."));
-
-        member.setFamilyId(friend.getUserId());
-        member.setFinishedCount(member.getFinishedCount()+1);
-        memberRepository.save(member);
-
-        return GetMemberResponseDto.builder()
-                .nickName(member.getNickName())
-                .exp(member.getExp())
-                .finishedCount(member.getFinishedCount())
-                .pickedCount(member.getPickedCount())
-                .walkedDay(member.getWalkedDay())
-                .profile(member.getProfile())
-                .familyId(member.getFamilyId())
-                .email(member.getEmail())
-                .build();
-    }
-
-    // 친구 정보 가져오기
-    @Transactional(readOnly = true)
-    public GetMemberResponseDto getFriendInfo(int userId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
-
-        if (member.getFamilyId() == null) {
-            throw new MemberNotFoundException("검색된 사용자가 없습니다.");
-        }
-
-        Member friend = memberRepository.findById(member.getFamilyId())
-                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + member.getFamilyId() + " 인 유저가 없습니다."));
-
-        return GetMemberResponseDto.builder()
-                .nickName(friend.getNickName())
-                .exp(friend.getExp())
-                .finishedCount(friend.getFinishedCount())
-                .pickedCount(friend.getPickedCount())
-                .walkedDay(friend.getWalkedDay())
-                .profile(friend.getProfile())
-                .familyId(friend.getFamilyId())
-                .email(friend.getEmail())
-                .build();
-    }
-
-    // 친구 관계 삭제
-    @Transactional
-    public void removeFriend(int userId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
-
-        member.setFamilyId(null);
-        member.setFinishedCount(member.getFinishedCount()-1);
-        memberRepository.save(member);
     }
 
     // 완료한 산책로 조회
@@ -397,6 +318,80 @@ public class MemberService {
         member.setPickedCount(member.getPickedCount() - 1);
 
         registLocationsRepository.deleteById(id);
+    }
+
+    // Email로 친구 찾기
+    @Transactional(readOnly = true)
+    public GetMemberResponseDto findByEmail(String targetUserEmail) {
+        Member member = memberRepository.findByEmail(targetUserEmail)
+                .orElseThrow(() -> new MemberNotFoundException("이메일이 " + targetUserEmail + " 인 유저를 찾지 못했습니다."));
+        return convertToDto(member);
+    }
+
+    // 친구 Id로 친구 추가
+    @Transactional
+    public GetMemberResponseDto addFriendById(int userId, AddFriendRequest friendRequest) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
+        Member friend = memberRepository.findById(friendRequest.getFriendId())
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + friendRequest.getFriendId() + " 인 친구가 없습니다."));
+
+        List<Integer> friendList = new ArrayList<>(Arrays.asList(member.getFriendList()));
+        if(!friendList.contains(friend.getUserId())){
+            friendList.add(friend.getUserId());
+            member.setFinishedCount(member.getFinishedCount()+1);
+        }
+
+        member.setFriendList(friendList.toArray(new Integer[friendList.size()]));
+        memberRepository.save(member);
+
+        return convertToDto(member);
+    }
+
+    // 친구 정보 가져오기
+    @Transactional(readOnly = true)
+    public List<GetMemberResponseDto> getFriendsInfo(int userId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
+
+        if (member.getFriendList() == null) {
+            throw new MemberNotFoundException("검색된 사용자가 없습니다.");
+        }
+
+        List<GetMemberResponseDto> friendInfoList = new ArrayList<>();
+        for(Integer friendId : member.getFriendList()){
+            Member friend = memberRepository.findById(friendId)
+                    .orElseThrow(() -> new MemberNotFoundException("아이디가 " + friendId + " 인 친구가 없습니다."));
+            friendInfoList.add(convertToDto(friend));
+        }
+
+        return friendInfoList;
+    }
+
+    // 친구 관계 삭제
+    @Transactional
+    public void removeFriend(int userId, int friendId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException("아이디가 " + userId + " 인 유저가 없습니다."));
+
+        List<Integer> friendList = new ArrayList<>(Arrays.asList(member.getFriendList()));
+        friendList.remove((Integer) friendId);
+        member.setFinishedCount(member.getFinishedCount()-1);
+        member.setFriendList(friendList.toArray(new Integer[friendList.size()]));
+        memberRepository.save(member);
+    }
+
+    private GetMemberResponseDto convertToDto(Member member) {
+        return GetMemberResponseDto.builder()
+                .nickName(member.getNickName())
+                .exp(member.getExp())
+                .finishedCount(member.getFinishedCount())
+                .pickedCount(member.getPickedCount())
+                .walkedDay(member.getWalkedDay())
+                .profile(member.getProfile())
+                .friendList(member.getFriendList())
+                .email(member.getEmail())
+                .build();
     }
 
 }
