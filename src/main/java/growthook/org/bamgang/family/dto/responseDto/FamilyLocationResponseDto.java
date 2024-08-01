@@ -8,4 +8,5 @@ import lombok.Data;
 public class FamilyLocationResponseDto {
     private Double latitude;
     private Double longitude;
+    private String locationsName;
 }

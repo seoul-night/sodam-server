@@ -28,4 +28,7 @@ public class FamilyLocations {
 
     @Column(insertable = false,name = "date")
     private LocalDate date;
+
+    @Column(name = "locations_name")
+    private String locationsName;
 }

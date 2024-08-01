@@ -7,4 +7,5 @@ public class FamilyLocationRequestDto {
     private Integer userId;
     private Double latitude;
     private Double longitude;
+    private String locationsName;
 }

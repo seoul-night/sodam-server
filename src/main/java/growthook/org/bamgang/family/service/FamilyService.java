@@ -30,7 +30,11 @@ public class FamilyService {
         Collections.sort(locationsList,(o1,o2)->o2.getId()-o1.getId());
         for(FamilyLocations loc : locationsList){
             if(!loc.getDate().equals(LocalDate.now())) continue;
-            responseList.add(FamilyLocationResponseDto.builder().latitude(loc.getLatitude()).longitude(loc.getLongitude()).build());
+            responseList.add(FamilyLocationResponseDto.builder()
+                            .latitude(loc.getLatitude())
+                            .longitude(loc.getLongitude())
+                            .locationsName(loc.getLocationsName())
+                            .build());
         }
         return responseList;
     }
@@ -41,6 +45,7 @@ public class FamilyService {
         location.setMemberId(requestDto.getUserId());
         location.setLongitude(requestDto.getLongitude());
         location.setLatitude(requestDto.getLatitude());
+        location.setLocationsName(requestDto.getLocationsName());
         familyLocationsRepository.save(location);
     }
 }
